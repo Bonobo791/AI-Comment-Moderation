@@ -58,6 +58,10 @@ test('keyboard skip link and collapsed mobile navigation work', async ({ page })
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
+  await expect(page.locator('main')).toHaveCSS('outline-style', 'solid');
+  await expect(page.locator('main')).toHaveCSS('outline-width', '3px');
+  await expect(page.locator('main')).toHaveCSS('outline-color', 'rgb(105, 80, 161)');
+  await expect(page.locator('main')).toHaveCSS('outline-offset', '-3px');
   await page.getByRole('button', { name: 'Open navigation' }).click();
   await expect(page.getByRole('button', { name: 'Close navigation' })).toHaveAttribute(
     'aria-expanded',

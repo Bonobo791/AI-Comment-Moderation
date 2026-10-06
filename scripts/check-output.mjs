@@ -3,6 +3,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { allowedExternalUrl, siteConfig } from '../src/lib/site-config.mjs';
 import { scenarios } from '../src/data/scenarios.mjs';
+import { JSDOM } from 'jsdom';
 const config = siteConfig(process.env);
 const html = await readFile('dist/index.html', 'utf8');
 assert.match(
@@ -52,8 +53,45 @@ for (const match of html.matchAll(/href="(https:[^"]+)"/g))
       allowedExternalUrl(match[1].replaceAll('&amp;', '&')),
     `Unapproved external URL ${match[1]}`,
   );
-for (const scenario of scenarios)
-  assert.ok(html.includes(scenario.id), `Missing pre-rendered fictional fixture ${scenario.id}`);
+const dom = new JSDOM(html);
+const examples = [
+  ...dom.window.document.querySelectorAll(
+    'details.all-examples > .static-example-grid > article[data-static-scenario]',
+  ),
+];
+const normalized = (value) => value.replace(/\s+/g, ' ').trim();
+for (const scenario of scenarios) {
+  const article = examples.find((item) => item.id === `example-${scenario.id}`);
+  assert.ok(article, `Missing pre-rendered fictional fixture ${scenario.id}`);
+  assert.equal(
+    normalized(article.querySelector('h3')?.textContent ?? ''),
+    normalized(scenario.label),
+  );
+  assert.equal(
+    normalized(article.querySelector('blockquote')?.textContent ?? ''),
+    normalized(scenario.text),
+    `Missing fictional comment text for ${scenario.id}`,
+  );
+  for (const context of [scenario.context, scenario.missingContext])
+    assert.ok(
+      [...article.querySelectorAll('p')].some((item) =>
+        normalized(item.textContent).includes(normalized(context)),
+      ),
+      `Missing fixture context for ${scenario.id}`,
+    );
+  for (const mode of ['cautious', 'stricter']) {
+    const explanation = [...article.querySelectorAll('p')].find((paragraph) =>
+      paragraph.querySelector('strong')?.textContent.toLowerCase().startsWith(`${mode}:`),
+    );
+    assert.ok(
+      explanation &&
+        normalized(explanation.textContent).includes(normalized(scenario.decisions[mode].reason)),
+      `Missing ${mode} policy explanation for ${scenario.id}`,
+    );
+  }
+}
+assert.equal(examples.length, scenarios.length, 'Unexpected pre-rendered fictional fixture count');
+dom.window.close();
 const error = await readFile('dist/404.html', 'utf8');
 assert.ok(error.includes('Page not found'));
 assert.ok(!error.includes('rel="canonical"'));

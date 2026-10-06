@@ -76,8 +76,9 @@ button[hidden],
   outline: 3px solid #6950a1;
   outline-offset: 5px;
 }
-main:focus {
-  outline: none;
+main:focus-visible {
+  outline: 3px solid #6950a1;
+  outline-offset: -3px;
 }
 h1,
 h2,

@@ -2,8 +2,11 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { resolve } from 'node:path';
 let html = await readFile('dist/index.html', 'utf8');
-for (const match of [...html.matchAll(/<link rel="stylesheet" href="(\/_astro\/[^"]+)"[^>]*>/g)])
-  html = html.replace(match[0], `<style>${await readFile(`dist${match[1]}`, 'utf8')}</style>`);
+for (const match of [...html.matchAll(/<link rel="stylesheet" href="(\/_astro\/[^"]+)"[^>]*>/g)]) {
+  const stylesheetPath = `dist${match[1]}`;
+  const stylesheet = await readFile(stylesheetPath, 'utf8');
+  html = html.replace(match[0], `<style>${stylesheet}</style>`);
+}
 for (const match of [
   ...html.matchAll(/<script type="module" src="(\/_astro\/[^"]+)"><\/script>/g),
 ]) {

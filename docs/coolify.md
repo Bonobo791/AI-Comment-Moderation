@@ -1,6 +1,8 @@
 # Coolify hosting preparation
 
-Prepared 6 October 2026. Configuration is ready for a container-capable review environment; Docker/Nginx runtime execution and Coolify deployment are **not verified**. No Docker, Podman or nginx executable is available in this workspace. No Coolify UI, SSH, DNS, production service or repository push was used.
+Reviewed 6 October 2026. The owner authorized review-branch publication and [draft PR #1](https://github.com/Bonobo791/AI-Comment-Moderation/pull/1). At published head [de0ba448](https://github.com/Bonobo791/AI-Comment-Moderation/commit/de0ba448cb3e6a6fe39565e11ed9d23551d48cc6), both the [push CI run](https://github.com/Bonobo791/AI-Comment-Moderation/actions/runs/37536172124) and [PR CI run](https://github.com/Bonobo791/AI-Comment-Moderation/actions/runs/37537165673) passed a real Docker build, `nginx -t`, image health and isolated HTTP smoke. Later revisions require their own exact-head checks; consult the draft PR for current results.
+
+No Docker, Podman or nginx executable is available in this workspace. No Coolify UI, SSH, DNS, production service or deployment was changed. Actual Coolify proxy/TLS and deployed-host behavior remain unverified.
 
 ## Selected build method
 
@@ -12,7 +14,7 @@ Coolify’s Static build pack packages files already present in a repository and
 
 | Setting                         | Value                                                                                 |
 | ------------------------------- | ------------------------------------------------------------------------------------- |
-| Repository                      | Bonobo791/AI-Comment-Moderation, after an authorized push                             |
+| Repository                      | Bonobo791/AI-Comment-Moderation, at the separately approved release commit            |
 | Build pack                      | Dockerfile                                                                            |
 | Base Directory                  | `/`                                                                                   |
 | Dockerfile Location             | `/Dockerfile`                                                                         |
@@ -42,7 +44,7 @@ node scripts/smoke-host.mjs http://127.0.0.1:8080
 docker stop aicm-preview
 ```
 
-Run those commands against an isolated local preview, not production. They remain unrun here. A health success proves the static server/health file responds; it does not prove crawler access, UI correctness, TLS, privacy or deployed source identity.
+Run those commands against an isolated preview. The CI equivalents passed at the published head; local execution remains unavailable. A health success proves the static server/health file responds; it does not prove crawler access, UI correctness, TLS, privacy or deployed source identity.
 
 ## Server behavior
 
@@ -60,10 +62,13 @@ The container does not force HTTPS using its internal HTTP scheme. Coolify’s a
 
 ## Image and reproducibility limits
 
-The build uses version-pinned `node:24.19.0-bookworm-slim` to match the tested local runtime and `nginx:1.30.5-alpine`. The current [official image manifest](https://github.com/docker-library/official-images/blob/master/library/nginx) lists the Nginx tag. Current Node manifest lists newer 24.21 releases rather than the historical 24.19 tag; the official historical Dockerfile at nodejs/docker-node commit 36fd5916b750 confirms the 24.19.0 Bookworm-slim build, while registry pull/digest retrieval was unavailable. A container operator must verify both pulls and pin approved immutable digests before a production release. No digest, successful image build or security scan is fabricated.
+The build uses version-pinned `node:24.19.0-bookworm-slim` to match the tested runtime and `nginx:1.30.5-alpine`. The published-head CI build resolved:
 
-The npm lockfile is frozen and local clean install/checks are verified. Container-layer reproducibility still needs actual image resolution/build evidence. Updating a Node image also requires updating/test-running runtime pins and CI, rather than hiding an engine mismatch.
+- `node:24.19.0-bookworm-slim`: `sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df`
+- `nginx:1.30.5-alpine`: `sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94`
+
+These are observed CI resolutions. The Dockerfile still uses tags; a production operator must verify and pin approved immutable digests before release. No vulnerability scan is claimed. The npm lockfile and isolated container build passed at the published head. Updating a Node image requires updating and testing runtime pins and CI too.
 
 ## Remaining release gates
 
-Browser/visual/keyboard/200% zoom evidence, image build/Nginx syntax/smoke tests, legal operator/contact/license, public content review, Coolify access and explicit push/deployment/DNS approval, actual TLS/redirect/header/privacy/crawler behavior and CI remain pending. Do not set SITE_RELEASE=true on an unprotected external preview or treat an indexable artifact as permission to publish.
+Automated Chromium/axe and isolated container checks passed at the published head. Manual screenshots, focus/assistive-technology/200% zoom review, legal operator/contact/license, public content review, Coolify access and explicit deployment/DNS approval remain pending. The release commit needs its own CI result and deployed identity/proxy/TLS/redirect/header/privacy/crawler verification. Do not set SITE_RELEASE=true on an unprotected external preview or treat an indexable artifact as permission to publish.

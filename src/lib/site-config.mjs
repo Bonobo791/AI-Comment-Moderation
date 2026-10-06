@@ -25,6 +25,7 @@ export function siteConfig(env = {}) {
     throw new Error('Invalid site origin');
   }
   if (
+    ![PRODUCTION_ORIGIN, `${PRODUCTION_ORIGIN}/`].includes(candidate) ||
     url.origin !== PRODUCTION_ORIGIN ||
     url.pathname !== '/' ||
     url.search ||

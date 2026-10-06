@@ -4,7 +4,7 @@
 
 Build a useful English-language guide to choosing an AI-assisted comment moderation workflow. The visitor should understand the category, explore fictional decisions, compare native/manual/tool/API options and leave with a practical review checklist. The guide must remain useful without the Moderaty CTA.
 
-The target repository is Bonobo791/AI-Comment-Moderation. It was reported empty and public before this local build; an AGENTS read returned not found. Local source, tests and offline preview are in scope. Publication, push, deployment, DNS, spending, credentials and provider changes require separate authorization.
+The target repository is Bonobo791/AI-Comment-Moderation. It was reported empty and public before this local build; an AGENTS read returned not found. The owner later authorized review-branch source publication and draft PR #1. Subsequent fixes require appropriate publication approval and exact-head verification. Merge, deployment, DNS, spending, credentials and provider changes require separate authorization.
 
 ## Identity and layout
 
