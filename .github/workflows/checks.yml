@@ -1,0 +1,57 @@
+name: Verify source-only guide
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+      SITE_RELEASE: 'false'
+      SITE_URL: https://aicommentmoderation.com
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm install -g npm@11.9.0
+      - run: npm ci
+      - run: npm run check
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run test:fault
+      - run: npm run build
+      - run: npm run test:dom
+      - run: npx playwright install --with-deps chromium
+      - run: CHROMIUM_PATH=$(find "$HOME/.cache/ms-playwright" -type f -path '*/chrome-linux64/chrome' | head -1) npm run test:e2e
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Build isolated preview image
+        run: docker build --build-arg SITE_URL=https://aicommentmoderation.com --build-arg SITE_RELEASE=false -t aicommentmoderation:ci .
+      - name: Verify Nginx syntax
+        run: docker run --rm --entrypoint nginx aicommentmoderation:ci -t
+      - name: Verify container health and static HTTP contracts
+        run: |
+          docker run -d --name aicm-smoke --health-interval=2s --health-start-period=1s -p 127.0.0.1:8080:8080 aicommentmoderation:ci
+          for attempt in $(seq 1 30); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' aicm-smoke)
+            if [ "$status" = healthy ]; then break; fi
+            sleep 2
+          done
+          test "$(docker inspect --format '{{.State.Health.Status}}' aicm-smoke)" = healthy
+          node scripts/smoke-host.mjs http://127.0.0.1:8080
+      - name: Preserve container diagnostics
+        if: failure()
+        run: docker logs aicm-smoke || true
+      - name: Remove isolated container
+        if: always()
+        run: docker rm -f aicm-smoke || true

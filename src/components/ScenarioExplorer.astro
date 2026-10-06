@@ -1,0 +1,156 @@
+---
+import { scenarios, FIXTURE_VERSION } from '../data/scenarios.mjs';
+import { evaluateScenario } from '../lib/scenario-rules.mjs';
+const first = scenarios[0];
+const result = evaluateScenario(first, 'cautious');
+const labels = {
+  allow: 'Allow',
+  review: 'Consider review',
+  action: 'Consider an action in your real tool',
+};
+---
+
+<div class="explorer">
+  <div class="explorer-controls">
+    <span class="eyebrow">A fictional decision desk</span>
+    <label class="control-label" for="scenario-select">
+      Choose an example
+    </label>
+    <select id="scenario-select" disabled>
+      {scenarios.map((scenario) => (
+        <option value={scenario.id}>{scenario.label}</option>
+      ))}
+    </select>
+    <fieldset class="mode-picker">
+      <legend>Choose a review policy</legend>
+      <label>
+        <input type="radio" name="review-mode" value="cautious" checked disabled />
+        <span>
+          <strong>Cautious review</strong>
+          <small>Keep benign content; review uncertainty</small>
+        </span>
+      </label>
+      <label>
+        <input type="radio" name="review-mode" value="stricter" disabled />
+        <span>
+          <strong>Stricter review</strong>
+          <small>Review more keywords and repetition</small>
+        </span>
+      </label>
+    </fieldset>
+    <button class="text-button" type="button" id="reset-demo" disabled>
+      Reset examples <span aria-hidden="true">↺</span>
+    </button>
+    <p class="small quiet">
+      The same comment can lead to a different review choice. Neither mode runs AI.
+    </p>
+  </div>
+  <div class="scenario-card">
+    <div class="scenario-card-head">
+      <span class="pill">Fictional comment</span>
+      <span class="small quiet" id="scenario-number">
+        01 / 10
+      </span>
+    </div>
+    <blockquote id="scenario-text">{first.text}</blockquote>
+    <div class="context-block">
+      <span class="small-label">Context</span>
+      <p id="scenario-context">{first.context}</p>
+    </div>
+    <div id="decision" class="decision" data-outcome={result.outcome}>
+      <span class="small-label">Illustrative decision</span>
+      <h3 id="decision-label">{labels[result.outcome]}</h3>
+      <p id="decision-reason">{result.reason}</p>
+    </div>
+    <p class="context-note">
+      <strong>A reviewer should know:</strong>{' '}
+      <span id="missing-context">{first.missingContext}</span>
+    </p>
+    <div class="demo-disclaimer">
+      <span aria-hidden="true">○</span>
+      <p>Illustrative rules, not a live AI prediction. No real comment changes.</p>
+    </div>
+  </div>
+</div>
+<p class="sr-only" id="demo-status" role="status" aria-live="polite" aria-atomic="true"></p>
+<noscript>
+  <p class="note">
+    The interactive controls need JavaScript. All ten examples and both policies are available
+    below.
+  </p>
+</noscript>
+<details class="all-examples">
+  <summary>
+    Read all 10 fictional examples <span>Fixture version {FIXTURE_VERSION}</span>
+  </summary>
+  <div class="static-example-grid">
+    {scenarios.map((scenario) => (
+      <article data-static-scenario id={`example-${scenario.id}`}>
+        <span class="small-label">{scenario.dimension}</span>
+        <h3>{scenario.label}</h3>
+        <blockquote>{scenario.text}</blockquote>
+        <p>{scenario.context}</p>
+        <p>
+          <strong>Cautious:</strong> {labels[scenario.decisions.cautious.outcome]}.{' '}
+          {scenario.decisions.cautious.reason}
+        </p>
+        <p>
+          <strong>Stricter:</strong> {labels[scenario.decisions.stricter.outcome]}.{' '}
+          {scenario.decisions.stricter.reason}
+        </p>
+        <p class="quiet">Context to check: {scenario.missingContext}</p>
+      </article>
+    ))}
+  </div>
+</details>
+<script>
+  import { scenarios } from '../data/scenarios.mjs';
+  import { evaluateScenario, resetDemo } from '../lib/scenario-rules.mjs';
+  const select = document.querySelector<HTMLSelectElement>('#scenario-select');
+  const reset = document.querySelector<HTMLButtonElement>('#reset-demo');
+  const modes = [...document.querySelectorAll<HTMLInputElement>('input[name="review-mode"]')];
+  const fields = {
+    text: document.querySelector('#scenario-text'),
+    context: document.querySelector('#scenario-context'),
+    label: document.querySelector('#decision-label'),
+    reason: document.querySelector('#decision-reason'),
+    missing: document.querySelector('#missing-context'),
+    number: document.querySelector('#scenario-number'),
+    status: document.querySelector('#demo-status'),
+    decision: document.querySelector('#decision'),
+  };
+  if (select && reset && modes.length === 2 && Object.values(fields).every(Boolean)) {
+    select.disabled = false;
+    reset.disabled = false;
+    modes.forEach((mode) => (mode.disabled = false));
+    const update = () => {
+      const scenario = scenarios.find((entry) => entry.id === select.value);
+      const mode = modes.find((entry) => entry.checked)?.value ?? 'cautious';
+      if (!scenario) return;
+      const result = evaluateScenario(scenario, mode);
+      const labels = {
+        allow: 'Allow',
+        review: 'Consider review',
+        action: 'Consider an action in your real tool',
+      };
+      fields.text!.textContent = scenario.text;
+      fields.context!.textContent = scenario.context;
+      fields.label!.textContent = labels[result.outcome];
+      fields.reason!.textContent = result.reason;
+      fields.missing!.textContent = scenario.missingContext;
+      fields.number!.textContent = `${String(scenarios.indexOf(scenario) + 1).padStart(2, '0')} / 10`;
+      fields.decision!.setAttribute('data-outcome', result.outcome);
+      fields.status!.textContent = `${scenario.label}. ${mode === 'cautious' ? 'Cautious review' : 'Stricter review'}. ${labels[result.outcome]}.`;
+    };
+    select.addEventListener('change', update);
+    modes.forEach((mode) => mode.addEventListener('change', update));
+    reset.addEventListener('click', () => {
+      const defaults = resetDemo();
+      select.value = defaults.scenarioId;
+      modes.forEach((mode) => (mode.checked = mode.value === defaults.mode));
+      update();
+    });
+    update();
+    window.addEventListener('pageshow', update);
+  }
+</script>

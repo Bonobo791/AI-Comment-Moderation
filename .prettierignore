@@ -1,0 +1,13 @@
+package-lock.json
+README.md
+dist
+node_modules
+.astro
+evidence
+test-results
+playwright-report
+deliverables
+deploy/generated
+deploy/*.conf
+Dockerfile
+.dockerignore

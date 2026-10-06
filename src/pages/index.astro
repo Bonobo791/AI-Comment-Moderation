@@ -1,0 +1,649 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ScenarioExplorer from '../components/ScenarioExplorer.astro';
+import { page, questions, checklist } from '../content/page.mjs';
+import { workflowFor } from '../lib/scenario-rules.mjs';
+const firstWorkflow = workflowFor('youtube');
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <section class="hero container" id="what-this-covers">
+    <div class="hero-copy">
+      <p class="eyebrow">
+        <span class="tiny-dot"></span>A practical guide from the team behind Moderaty
+      </p>
+      <h1>{page.heading}</h1>
+      <p class="hero-intro">
+        Learn how rules, AI and human review work together. Our Moderaty product section covers
+        YouTube comments only.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-dark" href="#try-the-examples">
+          Try fictional examples <span aria-hidden="true">↗</span>
+        </a>
+        <a class="text-link" href="#choose-a-workflow">
+          Compare workflows <span aria-hidden="true">↓</span>
+        </a>
+      </div>
+      <p class="hero-note">
+        A guide and local illustration. No account connection or live AI analysis.
+      </p>
+    </div>
+    <div
+      class="hero-visual"
+      role="group"
+      aria-label="Illustration of a comment moving through rules, an AI signal and human review"
+    >
+      <div class="visual-caption">
+        <span class="small-label">A thoughtful moderation workflow</span>
+        <span class="diagram-number">01—03</span>
+      </div>
+      <div class="visual-comment">
+        <span class="avatar" aria-hidden="true">
+          C
+        </span>
+        <div>
+          <span class="small-label">Fictional viewer feedback</span>
+          <p>
+            “Could you lower the music?
+            <br />I can’t hear your voice.”
+          </p>
+        </div>
+      </div>
+      <ol class="pipeline">
+        <li>
+          <span class="pipeline-node">01</span>
+          <div>
+            <strong>Apply your rules</strong>
+            <small>What behavior crosses the line?</small>
+          </div>
+          <span class="pipeline-icon" aria-hidden="true">
+            ↗
+          </span>
+        </li>
+        <li>
+          <span class="pipeline-node">02</span>
+          <div>
+            <strong>Consider an AI signal</strong>
+            <small>Classification can be mistaken</small>
+          </div>
+          <span class="pipeline-icon" aria-hidden="true">
+            ≈
+          </span>
+        </li>
+        <li>
+          <span class="pipeline-node">03</span>
+          <div>
+            <strong>Keep people in the loop</strong>
+            <small>Context determines the review</small>
+          </div>
+          <span class="pipeline-icon" aria-hidden="true">
+            ◎
+          </span>
+        </li>
+      </ol>
+      <div class="visual-decision">
+        <span class="check-symbol" aria-hidden="true">
+          ✓
+        </span>
+        <div>
+          <strong>Useful criticism can stay</strong>
+          <small>Negative feedback is not a policy violation</small>
+        </div>
+      </div>
+      <p class="small quiet">An original workflow illustration, not a product screenshot</p>
+    </div>
+  </section>
+  <div class="definition-bar">
+    <div class="container definition-inner">
+      <span class="eyebrow">The basic idea</span>
+      <p>
+        AI comment moderation uses a model to classify comment content. Your community policy,
+        platform controls and human reviewers determine what to do with that signal.
+      </p>
+      <a href="#rules-and-review">
+        Build a review routine <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <section class="section container" id="try-the-examples">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">01 / Learn by example</p>
+        <h2>
+          Context changes
+          <br />
+          the decision
+        </h2>
+      </div>
+      <p>
+        Try ten fictional comments under two review policies. See the reasoning, including the
+        information a reviewer still needs.
+      </p>
+    </div>
+    <ScenarioExplorer />
+  </section>
+
+  <section class="section section-tinted" id="choose-a-workflow">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">02 / Find your starting point</p>
+          <h2>
+            Choose the workflow
+            <br />
+            before the tool
+          </h2>
+        </div>
+        <p>
+          Start with the surface you moderate. Then check the action you need, the context you have
+          and who will handle review.
+        </p>
+      </div>
+      <div class="workflow-picker" role="group" aria-label="Choose a comment surface">
+        <button type="button" data-category="youtube" aria-pressed="true" disabled>
+          YouTube creator
+        </button>
+        <button type="button" data-category="social" aria-pressed="false" disabled>
+          Social & ads
+        </button>
+        <button type="button" data-category="cms" aria-pressed="false" disabled>
+          Website / CMS
+        </button>
+        <button type="button" data-category="api" aria-pressed="false" disabled>
+          Developer / API
+        </button>
+      </div>
+      <div class="workflow-result" id="workflow-result" aria-live="polite" aria-atomic="true">
+        <div class="workflow-result-icon" aria-hidden="true">
+          ↳
+        </div>
+        <div>
+          <span class="small-label">Your starting point</span>
+          <h3 id="workflow-title">{firstWorkflow.title}</h3>
+          <p id="workflow-step">{firstWorkflow.nextStep}</p>
+          <a class="text-link" id="workflow-next" href={firstWorkflow.anchor}>
+            Explore this workflow <span aria-hidden="true">↗</span>
+          </a>
+          <div id="workflow-moderaty" class="workflow-product">
+            <p>
+              This guide is published by the team behind Moderaty. Moderaty currently supports
+              YouTube comments only.
+            </p>
+            <a href="#moderaty">Evaluate Moderaty’s YouTube fit ↓</a>
+          </div>
+        </div>
+      </div>
+      <div class="workflow-options">
+        <article>
+          <span class="small-label">Native controls</span>
+          <h3>Use what your platform provides</h3>
+          <p>
+            Start with its comment settings and a manageable review routine. An additional
+            subscription may be unnecessary.
+          </p>
+        </article>
+        <article>
+          <span class="small-label">Human review</span>
+          <h3>Add a moderator when context matters</h3>
+          <p>
+            Give the reviewer a written policy, examples and a way to escalate uncertainty. Plan who
+            covers busy periods.
+          </p>
+        </article>
+        <article>
+          <span class="small-label">Compatible tool or API</span>
+          <h3>Verify the integration you need</h3>
+          <p>
+            Check the exact platform, comment surface, permissions, data flow and action limits
+            before connecting anything.
+          </p>
+        </article>
+      </div>
+      <noscript>
+        <div class="note">
+          <p>
+            For social and ad comments, verify platform support with a social-team provider. For
+            website comments, check your CMS’s moderation queue and plugin support. For API needs,
+            work with an engineer on classification and review.{' '}
+            <a href="#other-platforms">Explore these categories</a>
+          </p>
+        </div>
+      </noscript>
+    </div>
+  </section>
+
+  <section class="section container" id="native-settings">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">03 / A YouTube worked example</p>
+        <h2>
+          Native settings are
+          <br />a valid first choice
+        </h2>
+      </div>
+      <p>
+        YouTube’s Basic and Strict settings already use AI. Choose a level you can review, then
+        check the held queue for mistakes.{' '}
+        <a href="https://support.google.com/youtube/answer/9483359?hl=en">
+          YouTube’s settings guide ↗
+        </a>
+      </p>
+    </div>
+    <div class="native-grid">
+      <div class="native-modes">
+        <div>
+          <span>None</span>
+          <p>Publish without holding comments through this setting.</p>
+        </div>
+        <div>
+          <span>Basic</span>
+          <p>Hold comments YouTube identifies as potentially inappropriate.</p>
+        </div>
+        <div>
+          <span>Strict</span>
+          <p>Hold a broader set for review.</p>
+        </div>
+        <div>
+          <span>Hold all</span>
+          <p>Review comments before they appear.</p>
+        </div>
+      </div>
+      <aside class="native-note">
+        <span class="small-label">A review habit to start with</span>
+        <h3>Keep the queue within your capacity</h3>
+        <p>
+          You can pause new comments on a video while keeping existing ones. Blocked words and link
+          filters can help, with exceptions for approved users and moderators.
+        </p>
+        <p>
+          Held comments can remain in Studio for up to 60 days. Default upload changes do not update
+          existing videos; check the scope of each setting.
+        </p>
+        <p class="small">
+          Live chat uses a separate workflow.{' '}
+          <a href="https://support.google.com/youtube/answer/15535966?hl=en-uk">
+            Comment moderator guidance ↗
+          </a>
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section dark-section" id="review-tradeoffs">
+    <div class="container tradeoff-layout">
+      <div>
+        <p class="eyebrow">04 / Protect the conversation</p>
+        <h2>
+          A stricter filter
+          <br />
+          has a cost
+        </h2>
+        <p class="dark-intro">
+          A false positive hides a comment that should stay. A missed violation leaves harmful
+          content visible. Review both kinds of mistake.
+        </p>
+        <a class="dark-link" href="#try-the-examples">
+          Try the harmless blocked-word example <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <div class="tradeoff-cards">
+        <article>
+          <span class="small-label">Criticism</span>
+          <h3>“The app lost my draft twice.”</h3>
+          <p>Keep the complaint and investigate the failure. Positivity is not a safety rule.</p>
+        </article>
+        <article>
+          <span class="small-label">Quotation</span>
+          <h3>“Someone used an insult.”</h3>
+          <p>Read the original thread. The viewer could be reporting abuse.</p>
+        </article>
+        <article>
+          <span class="small-label">An innocent keyword</span>
+          <h3>“That was a killer guitar solo.”</h3>
+          <p>Review the music context before treating a word match as a violation.</p>
+        </article>
+      </div>
+      <p class="dark-footnote">
+        These examples illustrate a policy choice. They do not measure model accuracy or predict a
+        platform’s decision.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container" id="rules-and-review">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">05 / Put the policy into practice</p>
+        <h2>
+          Make review
+          <br />a repeatable habit
+        </h2>
+      </div>
+      <p>
+        Write a behavior-based rule, test harmless edge cases and choose what needs a person. Keep a
+        change log so a reviewer can explain a decision later.
+      </p>
+    </div>
+    <div class="policy-grid">
+      <div class="policy-example">
+        <span class="small-label">An example community rule</span>
+        <h3>“Keep criticism. Review unrelated promotion.”</h3>
+        <p>
+          A viewer can challenge an argument, report a bug or dislike a product. Review repeated
+          off-topic promotions under a stated rule. Read quotations and ambiguous language in
+          context.
+        </p>
+        <div class="policy-warning">
+          <strong>Before enabling real actions</strong>
+          <p>
+            Check what hold, hide, reject, delete and ban mean in your tool. Some actions are
+            irreversible. This guide performs none of them.
+          </p>
+        </div>
+      </div>
+      <div class="checklist-card">
+        <div class="checklist-heading">
+          <h3>Your review checklist</h3>
+          <span class="pill" id="checklist-count" role="status" hidden>
+            0 of 6 ready
+          </span>
+        </div>
+        <div id="review-checklist">
+          {checklist.map((item, index) => (
+            <label>
+              <input type="checkbox" id={`check-${index}`} />
+              <span>{item}</span>
+            </label>
+          ))}
+        </div>
+        <div class="checklist-footer">
+          <button type="button" class="text-button" id="reset-checklist" disabled hidden>
+            Reset checklist ↺
+          </button>
+          <span class="small quiet">Current tab only</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tinted" id="other-platforms">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">06 / Beyond YouTube</p>
+          <h2>
+            Different surfaces,
+            <br />
+            different integrations
+          </h2>
+        </div>
+        <p>
+          These are links to first-party product information, not rankings or hands-on endorsements.
+          Verify your requirements before connecting a provider.
+        </p>
+      </div>
+      <div class="other-grid">
+        <article>
+          <span class="small-label">Social & advertising teams</span>
+          <h3>Check the platform and ad surface</h3>
+          <p>
+            Confirm the account types, permissions and review options your team needs. Product
+            support can vary between posts, ads and live conversations.
+          </p>
+          <a href="https://www.superpower.social/">Superpower product information ↗</a>
+          <a href="https://www.komento.ai/en">Komento: Facebook and Instagram ↗</a>
+        </article>
+        <article>
+          <span class="small-label">Developers</span>
+          <h3>Plan classification and action separately</h3>
+          <p>
+            Define your policy, data handling, failure behavior and review queue. Your integration
+            needs to translate a result into an authorized action.
+          </p>
+          <a href="https://moderationapi.com/">Moderation API product scope ↗</a>
+          <a href="https://developers.openai.com/api/docs/guides/moderation">
+            OpenAI moderation documentation ↗
+          </a>
+        </article>
+        <article>
+          <span class="small-label">Website / CMS</span>
+          <h3>Review plugin maintenance and security</h3>
+          <p>
+            Check the CMS version, moderator access and where comment data goes. Test the submission
+            and held-review behavior in an isolated environment.
+          </p>
+          <a href="https://www.drupal.org/project/ai_comment_moderation">
+            Drupal AI Comment Moderation project ↗
+          </a>
+          <p class="small caution">
+            This Drupal project is outside Drupal’s security advisory coverage. Review its warning
+            before use.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="moderaty">
+    <div class="moderaty-panel">
+      <div class="moderaty-copy">
+        <p class="eyebrow">07 / A related YouTube product</p>
+        <h2>
+          Where Moderaty
+          <br />
+          may fit
+        </h2>
+        <p>
+          Moderaty describes a workflow with creator rules before AI, a human review queue and audit
+          records. Its optional feedback digest summarizes recurring viewer feedback without posting
+          replies.
+        </p>
+        <p>
+          It documents top-level YouTube comments only. Replies, live chat and other platforms are
+          outside that scope.
+        </p>
+        <div class="moderaty-actions">
+          <a class="button button-dark" href="https://moderaty.com/">
+            Explore Moderaty <span aria-hidden="true">↗</span>
+          </a>
+          <a class="text-link" href="https://moderaty.com/pricing">
+            See current pricing ↗
+          </a>
+        </div>
+      </div>
+      <aside class="moderaty-fit">
+        <span class="pill">YouTube comments only</span>
+        <h3>Evaluate it against your own needs</h3>
+        <ul>
+          <li>Start with native controls if they cover your workflow</li>
+          <li>Check permissions and data handling before connecting</li>
+          <li>
+            Use a dry run before enabling real actions; a dry run can still process comment data
+          </li>
+          <li>Verify irreversible actions and any undo limits</li>
+        </ul>
+        <p class="small">
+          This guide is published by the team behind Moderaty. It is not an independent product
+          review or an official YouTube resource.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section container questions-section" id="questions">
+    <div class="questions-layout">
+      <div>
+        <p class="eyebrow">08 / Useful questions</p>
+        <h2>
+          Before you
+          <br />
+          automate
+        </h2>
+        <p>Choose a policy you can explain and a workflow you can review.</p>
+      </div>
+      <div class="question-list">
+        {questions.map((item) => (
+          <details>
+            <summary>
+              {item.question}
+              <span aria-hidden="true">+</span>
+            </summary>
+            <div>
+              <p>{item.answer}</p>
+              {item.source && <a href={item.source}>{item.sourceLabel} ↗</a>}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tinted" id="sources">
+    <div class="container sources-layout">
+      <div>
+        <p class="eyebrow">09 / Sources & review</p>
+        <h2>
+          Check the original
+          <br />
+          documentation
+        </h2>
+        <p>
+          Editorial review: {page.reviewed}
+          <br />
+          Publisher: the team behind Moderaty
+        </p>
+        <p class="small quiet">
+          This review checks first-party descriptions and platform settings. It does not establish
+          hands-on performance, model accuracy or legal compliance.
+        </p>
+      </div>
+      <div class="source-list">
+        <a href="https://support.google.com/youtube/answer/9483359?hl=en">
+          <span>
+            <strong>YouTube comment settings</strong>
+            <small>Native AI, held comments and setting scope</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://support.google.com/youtube/answer/15535966?hl=en-uk">
+          <span>
+            <strong>YouTube moderator guidance</strong>
+            <small>Comment review and the separate live-chat workflow</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://moderaty.com/">
+          <span>
+            <strong>Moderaty product information</strong>
+            <small>First-party workflow and feature descriptions</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://github.com/Bonobo791/Moderaty/blob/89ffd992497ad2d3cf879cde6daf42931e6cb656/PRODUCT.md">
+          <span>
+            <strong>Moderaty documented scope</strong>
+            <small>Top-level comments, reply and live-chat limitations</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://github.com/Bonobo791/Moderaty">
+          <span>
+            <strong>Moderaty source and license</strong>
+            <small>Source-available under PolyForm Shield</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <p class="small">
+          Found an error in this guide?{' '}
+          <a href="https://github.com/Bonobo791/AI-Comment-Moderation/issues">
+            Report a correction on GitHub
+          </a>
+          . Please keep private account and comment data out of public reports.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container privacy-section" id="privacy-and-ownership">
+    <p class="eyebrow">10 / Privacy & ownership</p>
+    <div class="privacy-grid">
+      <h2>
+        What this guide
+        <br />
+        does with data
+      </h2>
+      <div>
+        <p>
+          The explorer uses fictional presets and local rules. It sends no comments to a model or
+          platform. The checklist stays in memory in this tab; the page stores no browser history of
+          your choices.
+        </p>
+        <p>
+          This build includes no analytics, account connection, form or tracking cookies. A hosting
+          provider may process request metadata such as IP addresses. The host and its retention
+          terms still need confirmation before public launch.
+        </p>
+        <p>
+          The team behind Moderaty publishes the guide. Legal operator and contact details remain
+          subject to release review. External websites have their own policies.{' '}
+          <a href="https://moderaty.com/privacy">Moderaty privacy</a> ·{' '}
+          <a href="https://moderaty.com/terms">Moderaty terms</a>
+        </p>
+      </div>
+    </div>
+  </section>
+  <section class="closing-strip">
+    <div class="container">
+      <h2>Start with the review decision</h2>
+      <a class="button button-dark" href="#try-the-examples">
+        Try the fictional examples <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <script>
+    import { workflowFor } from '../lib/scenario-rules.mjs';
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-category]')];
+    const title = document.querySelector('#workflow-title');
+    const step = document.querySelector('#workflow-step');
+    const next = document.querySelector<HTMLAnchorElement>('#workflow-next');
+    const product = document.querySelector<HTMLElement>('#workflow-moderaty');
+    if (title && step && next && product) {
+      buttons.forEach((button) => {
+        button.disabled = false;
+        button.addEventListener('click', () => {
+          const category = button.dataset.category;
+          if (!category) return;
+          const result = workflowFor(category);
+          buttons.forEach((other) => other.setAttribute('aria-pressed', String(other === button)));
+          title.textContent = result.title;
+          step.textContent = result.nextStep;
+          next.href = result.anchor;
+          product.hidden = !result.moderaty;
+        });
+      });
+    }
+    const boxes = [
+      ...document.querySelectorAll<HTMLInputElement>('#review-checklist input[type=checkbox]'),
+    ];
+    const count = document.querySelector<HTMLElement>('#checklist-count');
+    const reset = document.querySelector<HTMLButtonElement>('#reset-checklist');
+    if (count && reset) {
+      count.hidden = false;
+      reset.hidden = false;
+      reset.disabled = false;
+      const update = () => {
+        count.textContent = `${boxes.filter((box) => box.checked).length} of ${boxes.length} ready`;
+      };
+      boxes.forEach((box) => box.addEventListener('change', update));
+      reset.addEventListener('click', () => {
+        boxes.forEach((box) => (box.checked = false));
+        update();
+      });
+      update();
+      window.addEventListener('pageshow', update);
+    }
+  </script>
+</BaseLayout>
