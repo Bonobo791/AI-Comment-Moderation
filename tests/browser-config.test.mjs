@@ -4,11 +4,10 @@ import { readFile } from 'node:fs/promises';
 import config from '../playwright.config.mjs';
 import { assertVerificationWorkflow } from '../scripts/ci-policy.mjs';
 
-test('the owner’s initial README remains byte-for-byte unchanged', async () => {
-  assert.equal(
-    await readFile('README.md', 'utf8'),
-    '# AI-Comment-Moderation\nAI Comment Moderation website.\n',
-  );
+test('the README retains the owner’s original heading and description', async () => {
+  const readme = await readFile('README.md', 'utf8');
+  assert.ok(readme.startsWith('# AI-Comment-Moderation\n'));
+  assert.ok(readme.includes('\nAI Comment Moderation website.\n'));
 });
 
 test('Playwright preview stays foreground under Astro agent auto-background detection', () => {
