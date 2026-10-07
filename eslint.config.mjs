@@ -13,10 +13,13 @@ export default [
       'test-results/**',
       'playwright-report/**',
       'deliverables/**',
+      'reports/**',
+      '.stryker-tmp/**',
     ],
   },
   js.configs.recommended,
   ...astro.configs.recommended,
   { files: ['**/*.astro'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
+  { files: ['**/*.ts'], languageOptions: { parser: tseslint.parser } },
   { languageOptions: { globals: { ...globals.node, ...globals.browser } } },
 ];

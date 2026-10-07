@@ -6,6 +6,8 @@ import { scenarios } from '../src/data/scenarios.mjs';
 import { JSDOM } from 'jsdom';
 const config = siteConfig(process.env);
 const html = await readFile('dist/index.html', 'utf8');
+const dom = new JSDOM(html);
+const document = dom.window.document;
 assert.match(
   html,
   /class="hero-visual"[^>]*role="group"/,
@@ -38,22 +40,53 @@ assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1);
 assert.ok(html.includes('Choose an AI comment moderation workflow'));
 assert.ok(html.includes('AI Comment Moderation: Workflows, Examples and Review Choices'));
 assert.match(html, /rel="canonical" href="https:\/\/aicommentmoderation\.com\/"/);
-assert.ok(html.includes(config.release ? 'index,follow' : 'noindex,follow'));
+assert.equal(document.querySelectorAll('meta[name="robots"]').length, 1);
+assert.equal(
+  document.querySelector('meta[name="robots"]')?.getAttribute('content'),
+  config.release ? 'index,follow' : 'noindex,follow',
+  'Incorrect robots metadata for the selected artifact mode',
+);
 assert.ok(html.includes('Illustrative rules, not a live AI prediction'));
 assert.ok(html.includes('the team behind Moderaty'));
 assert.ok(html.includes('top-level YouTube comments'));
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
 assert.equal(ids.size, [...html.matchAll(/\bid="([^"]+)"/g)].length, 'IDs must be unique');
 for (const id of expectedIds) assert.ok(ids.has(id), `Missing required anchor ${id}`);
-for (const match of html.matchAll(/href="#([^"]+)"/g))
-  assert.ok(ids.has(match[1]), `Missing link target ${match[1]}`);
-for (const match of html.matchAll(/href="(https:[^"]+)"/g))
-  assert.ok(
-    match[1].startsWith('https://aicommentmoderation.com/') ||
-      allowedExternalUrl(match[1].replaceAll('&amp;', '&')),
-    `Unapproved external URL ${match[1]}`,
-  );
-const dom = new JSDOM(html);
+async function checkDestinations(document, label) {
+  assert.equal(document.querySelector('base'), null, `Unapproved base element in ${label}`);
+  for (const element of document.querySelectorAll('[href], [src]')) {
+    for (const attribute of ['href', 'src']) {
+      const value = element.getAttribute(attribute);
+      if (value === null) continue;
+      let url;
+      try {
+        url = new URL(value, `${config.origin}/`);
+      } catch {
+        throw new Error(`Unapproved ${attribute} destination in ${label}`);
+      }
+      const local = url.origin === config.origin && !url.username && !url.password;
+      assert.ok(
+        local || (attribute === 'href' && element.tagName === 'A' && allowedExternalUrl(value)),
+        `Unapproved ${attribute} destination in ${label}`,
+      );
+      if (local && url.pathname === '/' && url.hash) {
+        let fragment;
+        try {
+          fragment = decodeURIComponent(url.hash.slice(1));
+        } catch {
+          throw new Error('Missing link target: invalid fragment');
+        }
+        assert.ok(ids.has(fragment), `Missing link target ${fragment}`);
+      }
+      const resource =
+        attribute === 'src' ||
+        (element.tagName === 'LINK' &&
+          ['stylesheet', 'icon'].includes(element.getAttribute('rel')));
+      if (local && resource) await readFile(join('dist', url.pathname));
+    }
+  }
+}
+await checkDestinations(document, 'index.html');
 const examples = [
   ...dom.window.document.querySelectorAll(
     'details.all-examples > .static-example-grid > article[data-static-scenario]',
@@ -96,6 +129,9 @@ const error = await readFile('dist/404.html', 'utf8');
 assert.ok(error.includes('Page not found'));
 assert.ok(!error.includes('rel="canonical"'));
 assert.ok(error.includes('noindex,follow'));
+const errorDOM = new JSDOM(error);
+await checkDestinations(errorDOM.window.document, '404.html');
+errorDOM.window.close();
 const robots = await readFile('dist/robots.txt', 'utf8');
 assert.ok(robots.includes('Sitemap: https://aicommentmoderation.com/sitemap.xml'));
 assert.ok(robots.includes(config.release ? 'Allow: /' : 'Disallow: /'));

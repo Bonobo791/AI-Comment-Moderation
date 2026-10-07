@@ -44,9 +44,13 @@ function example(scenario) {
   return `<article data-static-scenario id="example-${scenario.id}"><h3>${escape(scenario.label)}</h3><blockquote>${escape(scenario.text)}</blockquote><p>${escape(scenario.context)}</p><p><strong>Cautious:</strong> ${escape(scenario.decisions.cautious.reason)}</p><p><strong>Stricter:</strong> ${escape(scenario.decisions.stricter.reason)}</p><p>${escape(scenario.missingContext)}</p></article>`;
 }
 function guide(examples) {
-  return `<html><head><title>AI Comment Moderation: Workflows, Examples and Review Choices</title><link rel="canonical" href="https://aicommentmoderation.com/"><meta name="robots" content="noindex,follow"></head><body><h1>Choose an AI comment moderation workflow</h1><div class="hero-visual" role="group"></div><span id="checklist-count" hidden></span><button id="reset-checklist" hidden></button><p>Illustrative rules, not a live AI prediction; the team behind Moderaty; top-level YouTube comments</p>${anchors.map((id) => `<section id="${id}"></section>`).join('')}<select>${scenarios.map((scenario) => `<option value="${scenario.id}">${escape(scenario.label)}</option>`).join('')}</select><details class="all-examples"><div class="static-example-grid">${examples}</div></details></body></html>`;
+  const sections = anchors.map((id) => `<section id="${id}"></section>`).join('');
+  const options = scenarios
+    .map((scenario) => `<option value="${scenario.id}">${escape(scenario.label)}</option>`)
+    .join('');
+  return `<html><head><title>AI Comment Moderation: Workflows, Examples and Review Choices</title><link rel="canonical" href="https://aicommentmoderation.com/"><meta name="robots" content="noindex,follow"></head><body><h1>Choose an AI comment moderation workflow</h1><div class="hero-visual" role="group"></div><span id="checklist-count" hidden></span><button id="reset-checklist" hidden></button><p>Illustrative rules, not a live AI prediction; the team behind Moderaty; top-level YouTube comments</p>${sections}<select>${options}</select><details class="all-examples"><div class="static-example-grid">${examples}</div></details></body></html>`;
 }
-async function checkOutput(html) {
+async function checkOutput(html, release = false) {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-output-review-'));
   try {
     await mkdir(join(dir, 'dist'));
@@ -54,13 +58,17 @@ async function checkOutput(html) {
     await writeFile(join(dir, 'dist/404.html'), 'Page not found noindex,follow');
     await writeFile(
       join(dir, 'dist/robots.txt'),
-      'Disallow: /\nSitemap: https://aicommentmoderation.com/sitemap.xml',
+      `${release ? 'Allow' : 'Disallow'}: /\nSitemap: https://aicommentmoderation.com/sitemap.xml`,
     );
     await writeFile(join(dir, 'dist/sitemap.xml'), '<loc>https://aicommentmoderation.com/</loc>');
     return spawnSync(process.execPath, [resolve('scripts/check-output.mjs')], {
       cwd: dir,
       encoding: 'utf8',
-      env: { ...process.env, SITE_RELEASE: 'false' },
+      env: {
+        ...process.env,
+        SITE_URL: 'https://aicommentmoderation.com',
+        SITE_RELEASE: String(release),
+      },
     });
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -115,4 +123,47 @@ test('built-output fixture coverage rejects a missing context explanation', asyn
 test('offline stylesheet packaging avoids nested template literals', async () => {
   const source = await readFile('scripts/package-preview.mjs', 'utf8');
   assert.doesNotMatch(source, /`<style>\$\{await readFile\(`/);
+});
+test('fixture identity-set comparison supplies the same explicit string comparator on both sides', async () => {
+  const source = await readFile('tests/scenarios.test.mjs', 'utf8');
+  const identityCheck = source.slice(0, source.indexOf("test('ten fictional fixtures"));
+  assert.doesNotMatch(identityCheck, /\.sort\(\)/);
+  assert.equal((identityCheck.match(/\.sort\(compareFixtureIds\)/g) ?? []).length, 2);
+});
+for (const [name, tag] of [
+  ['HTTP editorial destination', '<a href="http://unapproved.invalid/">Exit</a>'],
+  ['protocol-relative editorial destination', '<a href="//unapproved.invalid/">Exit</a>'],
+  ['unapproved remote script', '<script src="https://unapproved.invalid/script.js"></script>'],
+  [
+    'allowlisted remote script without selected runtime integration',
+    '<script src="https://moderaty.com/script.js"></script>',
+  ],
+  ['remote image', '<img src="https://unapproved.invalid/image.png" alt="Fixture">'],
+  ['executable link scheme', '<a href="javascript:alert(1)">Exit</a>'],
+  ['external stylesheet', '<link rel="stylesheet" href="https://moderaty.com/remote.css">'],
+  [
+    'external script preload',
+    '<link rel="preload" as="script" href="https://github.com/remote.js">',
+  ],
+  ['external base element', '<base href="https://github.com/">'],
+])
+  test(`built-output destination policy rejects ${name}`, async () => {
+    const html = guide(scenarios.map(example).join('')).replace('</body>', `${tag}</body>`);
+    const run = await checkOutput(html);
+    assert.notEqual(run.status, 0, run.stdout);
+    assert.match(run.stderr, /Unapproved/);
+  });
+test('built-output fragment coverage rejects broken root-relative targets', async () => {
+  const html = guide(scenarios.map(example).join('')).replace(
+    '</body>',
+    '<a href="/#nonexistent">Missing</a></body>',
+  );
+  const run = await checkOutput(html);
+  assert.notEqual(run.status, 0, run.stdout);
+  assert.match(run.stderr, /Missing link target/);
+});
+test('built-output release validation cannot mistake noindex for index', async () => {
+  const run = await checkOutput(guide(scenarios.map(example).join('')), true);
+  assert.notEqual(run.status, 0, run.stdout);
+  assert.match(run.stderr, /robots metadata/);
 });

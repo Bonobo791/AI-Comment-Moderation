@@ -1776,6 +1776,11 @@ select {
   .dark-section p {
     color: black;
   }
+  .dark-section .eyebrow,
+  .dark-section .small-label,
+  .dark-section a {
+    color: black;
+  }
   .scenario-card,
   .checklist-card {
     break-inside: avoid;

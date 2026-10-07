@@ -82,9 +82,12 @@ test('navigation toggles and Escape closes the menu in built DOM', () => {
   const dom = createDOM();
   const { document, KeyboardEvent } = dom.window;
   const button = document.querySelector('#nav-toggle');
+  assert.equal(button.getAttribute('aria-label'), 'Menu: open navigation');
   button.click();
   assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(button.getAttribute('aria-label'), 'Menu: close navigation');
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
   assert.equal(button.getAttribute('aria-expanded'), 'false');
+  assert.equal(button.getAttribute('aria-label'), 'Menu: open navigation');
   dom.window.close();
 });

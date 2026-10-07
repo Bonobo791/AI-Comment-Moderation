@@ -4,7 +4,7 @@
 
 Build a useful English-language guide to choosing an AI-assisted comment moderation workflow. The visitor should understand the category, explore fictional decisions, compare native/manual/tool/API options and leave with a practical review checklist. The guide must remain useful without the Moderaty CTA.
 
-The target repository is Bonobo791/AI-Comment-Moderation. It was reported empty and public before this local build; an AGENTS read returned not found. The owner later authorized review-branch source publication and draft PR #1. Subsequent fixes require appropriate publication approval and exact-head verification. Merge, deployment, DNS, spending, credentials and provider changes require separate authorization.
+The target repository is Bonobo791/AI-Comment-Moderation. It was reported empty and public before this local build; an AGENTS read returned not found. The owner later authorized review-branch source publication and PR #1 (originally draft; now open and ready for review). Current actual-template adoption is bounded local work only. Subsequent fixes require appropriate publication approval and exact-head verification. Merge, deployment, DNS, spending, credentials and provider changes require separate authorization.
 
 ## Identity and layout
 
@@ -62,3 +62,9 @@ Run locked install, type/lint/format checks, deterministic/property tests, delib
 Real browser evidence must cover 320/375/768/1280 widths, keyboard-only interaction, visible focus/live announcements, no-JS and failed-module fallback, repeated/reset/restored flows, reduced motion and 200% zoom. DOM simulation does not establish visual or assistive-technology behavior.
 
 Local implementation, browser verification, selected-provider integration, CI and public release are separate statuses. Do not claim deployed, indexed, cited, converted or production-ready without direct evidence.
+
+## Actual template adoption and artifact identity
+
+The current local alignment instantiates the real Site-Bootstrap-ADM document/operational assets at pinned commit 916df29d7410b4a9a5048ed69819b5da448a2ecf, with scoped MIT attribution. The existing original Astro source/content/assets retain their ownership and UNLICENSED status. The upstream reference collection is not a runnable site scaffold, and no application-clone ancestry is claimed.
+
+The public /build.json operational marker contains only schemaVersion, validated source commit (or null for unidentified preview), release boolean and relative-public-file SHA-256 map. SITE_COMMIT is optional/empty-safe for previews and required for releases. Actual served SHA and page/asset hashes must match the approved artifact; health alone proves availability. New exact-source tests/CI and publication approval are separate from template adoption. T06 now has actual scoped evidence; current full-source checks, manual screenshots/200% zoom/AT and actual host/operator/release gates remain pending.

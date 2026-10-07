@@ -45,7 +45,7 @@ export function canonical(path = '/', origin = PRODUCTION_ORIGIN) {
   const url = new URL(path, origin);
   let pathname = url.pathname;
   if (!pathname.endsWith('/') && !/\.[a-z0-9]+$/i.test(pathname)) pathname += '/';
-  return `${origin}${pathname}`;
+  return `${url.origin}${pathname}`;
 }
 
 /** @param {string} value */

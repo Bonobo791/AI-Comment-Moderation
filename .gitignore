@@ -12,3 +12,8 @@ deploy/generated/
 docs/superpowers/
 .superpowers/
 *.zip
+coverage/
+reports/mutation/
+.stryker-tmp/
+.launch/
+*.log

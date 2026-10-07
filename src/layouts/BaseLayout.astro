@@ -77,7 +77,7 @@ const schema = {
           type="button"
           aria-expanded="false"
           aria-controls="site-nav"
-          aria-label="Open navigation"
+          aria-label="Menu: open navigation"
           hidden
         >
           Menu <span aria-hidden="true">+</span>
@@ -115,13 +115,16 @@ const schema = {
         const close = () => {
           nav.classList.remove('is-open');
           button.setAttribute('aria-expanded', 'false');
-          button.setAttribute('aria-label', 'Open navigation');
+          button.setAttribute('aria-label', 'Menu: open navigation');
         };
         button.addEventListener('click', () => {
           const open = !nav.classList.contains('is-open');
           nav.classList.toggle('is-open', open);
           button.setAttribute('aria-expanded', String(open));
-          button.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+          button.setAttribute(
+            'aria-label',
+            open ? 'Menu: close navigation' : 'Menu: open navigation',
+          );
         });
         nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
         document.addEventListener('keydown', (event) => {

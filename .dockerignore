@@ -12,3 +12,8 @@ docs/superpowers
 test-results
 playwright-report
 *.zip
+coverage
+reports
+.stryker-tmp
+.launch
+*.log

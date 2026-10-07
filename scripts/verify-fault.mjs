@@ -10,7 +10,7 @@ try {
   await cp('tests/config.test.mjs', join(dir, 'tests/config.test.mjs'));
   const path = join(dir, 'src/lib/site-config.mjs');
   const original = await readFile(path, 'utf8');
-  const needle = 'return `${origin}${pathname}`;';
+  const needle = 'return `${url.origin}${pathname}`;';
   if (!original.includes(needle)) throw new Error('Canonical mutation target not found');
   await writeFile(path, original.replace(needle, 'return url.href;'));
   const run = spawnSync(

@@ -4,10 +4,16 @@ import { readFile } from 'node:fs/promises';
 
 test('Coolify Docker build is locked, preview-safe and static-only at runtime', async () => {
   const docker = await readFile('Dockerfile', 'utf8');
-  assert.match(docker, /FROM node:24\.19\.0-bookworm-slim AS build/);
+  assert.match(
+    docker,
+    /FROM node:24\.19\.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS build/,
+  );
   assert.match(docker, /ARG SITE_RELEASE=false/);
   assert.match(docker, /RUN npm ci/);
-  assert.match(docker, /FROM nginx:1\.30\.5-alpine AS runtime/);
+  assert.match(
+    docker,
+    /FROM nginx:1\.30\.5-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94 AS runtime/,
+  );
   assert.match(docker, /COPY --from=build \/app\/dist/);
   assert.match(docker, /USER nginx/);
   assert.match(docker, /EXPOSE 8080/);

@@ -62,13 +62,13 @@ test('keyboard skip link and collapsed mobile navigation work', async ({ page })
   await expect(page.locator('main')).toHaveCSS('outline-width', '3px');
   await expect(page.locator('main')).toHaveCSS('outline-color', 'rgb(105, 80, 161)');
   await expect(page.locator('main')).toHaveCSS('outline-offset', '-3px');
-  await page.getByRole('button', { name: 'Open navigation' }).click();
-  await expect(page.getByRole('button', { name: 'Close navigation' })).toHaveAttribute(
+  await page.getByRole('button', { name: 'Menu: open navigation' }).click();
+  await expect(page.getByRole('button', { name: 'Menu: close navigation' })).toHaveAttribute(
     'aria-expanded',
     'true',
   );
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: 'Menu: open navigation' })).toHaveAttribute(
     'aria-expanded',
     'false',
   );
@@ -90,6 +90,20 @@ test('all examples and checklist remain useful without JavaScript', async ({ bro
   await expect(page.locator('#checklist-count')).toBeHidden();
   await expect(page.locator('#reset-checklist')).toBeHidden();
   await context.close();
+});
+test('printed dark-section text has dark colors on the white print background', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.dark-section')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  for (const selector of [
+    '.dark-section .eyebrow',
+    '.dark-section .small-label',
+    '.dark-section a',
+  ])
+    for (const item of await page.locator(selector).all())
+      await expect(item).toHaveCSS('color', 'rgb(0, 0, 0)');
 });
 test('root, query canonical, assets and genuine unknown-route status', async ({
   page,

@@ -5,27 +5,9 @@ import { canonical, siteConfig, allowedExternalUrl } from '../src/lib/site-confi
 import { evaluateScenario, workflowFor } from '../src/lib/scenario-rules.mjs';
 import { scenarios } from '../src/data/scenarios.mjs';
 import { expectedPolicy } from './fixture-policy.mjs';
+import { propertyOptions } from './helpers/property-options.mjs';
 
-const numRuns = process.env.FC_NUM_RUNS === undefined ? 100 : Number(process.env.FC_NUM_RUNS);
-if (!Number.isSafeInteger(numRuns) || numRuns <= 0)
-  throw new Error('FC_NUM_RUNS must be a positive safe integer');
-const options = { numRuns };
-if (process.env.FC_SEED !== undefined) {
-  const seed = Number(process.env.FC_SEED);
-  if (
-    !/^-?\d+$/.test(process.env.FC_SEED) ||
-    !Number.isInteger(seed) ||
-    seed < -2147483648 ||
-    seed > 2147483647
-  )
-    throw new Error('FC_SEED must be a signed 32-bit integer');
-  options.seed = seed;
-}
-if (process.env.FC_PATH !== undefined) {
-  if (options.seed === undefined || !/^\d+(?::\d+)*$/.test(process.env.FC_PATH))
-    throw new Error('FC_PATH needs a seed and a valid shrink path');
-  options.path = process.env.FC_PATH;
-}
+const options = propertyOptions();
 
 test('property: arbitrary query and fragment cannot leak into canonical', () => {
   fc.assert(

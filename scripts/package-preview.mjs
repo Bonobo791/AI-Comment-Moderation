@@ -2,6 +2,9 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { resolve } from 'node:path';
 let html = await readFile('dist/index.html', 'utf8');
+const robotsMeta = /(<meta name="robots" content=")[^"]+("[^>]*>)/;
+if (!robotsMeta.test(html)) throw new Error('Cannot package a preview without robots metadata');
+html = html.replace(robotsMeta, '$1noindex,follow$2');
 for (const match of [...html.matchAll(/<link rel="stylesheet" href="(\/_astro\/[^"]+)"[^>]*>/g)]) {
   const stylesheetPath = `dist${match[1]}`;
   const stylesheet = await readFile(stylesheetPath, 'utf8');
