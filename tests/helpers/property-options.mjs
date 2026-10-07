@@ -1,0 +1,28 @@
+// Copied unchanged from Site-Bootstrap-ADM; MIT License.
+// Copyright (c) 2026 Site and App Bootstrap contributors.
+// Source commit: 916df29d7410b4a9a5048ed69819b5da448a2ecf
+// Source blob: 3b38880086a0f7abb3b3c5614c196262c9f5ab12
+// Source path: skills/site-bootstrap-adm/assets/fast-check-example/property-options.mjs
+// License: https://github.com/Bonobo791/Site-Bootstrap-ADM/blob/916df29d7410b4a9a5048ed69819b5da448a2ecf/LICENSE
+// Keep the upstream function body verbatim for source verification.
+// prettier-ignore
+export function propertyOptions(env = process.env) {
+  const rawRuns = env.FC_NUM_RUNS;
+  if (rawRuns !== undefined && (!/^[1-9]\d*$/.test(rawRuns) || !Number.isSafeInteger(Number(rawRuns)))) {
+    throw new Error('FC_NUM_RUNS must be a positive safe integer');
+  }
+  const result = { numRuns: rawRuns === undefined ? 100 : Number(rawRuns) };
+  if (env.FC_SEED !== undefined) {
+    if (!/^-?\d+$/.test(env.FC_SEED) || !Number.isSafeInteger(Number(env.FC_SEED)) ||
+        Number(env.FC_SEED) < -2147483648 || Number(env.FC_SEED) > 2147483647) {
+      throw new Error('FC_SEED must be a signed 32-bit integer');
+    }
+    result.seed = Number(env.FC_SEED);
+  }
+  if (env.FC_PATH !== undefined) {
+    if (result.seed === undefined) throw new Error('FC_PATH requires FC_SEED');
+    if (!/^\d+(?::\d+)*$/.test(env.FC_PATH)) throw new Error('FC_PATH must be a replay path');
+    result.path = env.FC_PATH;
+  }
+  return result;
+}

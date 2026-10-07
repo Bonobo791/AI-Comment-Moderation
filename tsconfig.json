@@ -1,0 +1,5 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": { "allowJs": true, "checkJs": true, "types": ["node"] },
+  "exclude": ["dist", "node_modules", "evidence", "tests", "scripts", "*.config.mjs"]
+}

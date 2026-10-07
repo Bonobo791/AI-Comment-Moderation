@@ -1,0 +1,51 @@
+{
+  "name": "aicommentmoderation-guide",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "24.19.x",
+    "npm": "11.9.x"
+  },
+  "packageManager": "npm@11.9.0",
+  "scripts": {
+    "dev": "node scripts/astro.mjs dev --host 127.0.0.1",
+    "check": "node scripts/astro.mjs check",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --test tests/*.test.mjs",
+    "test:property": "node --test tests/*.pbt.test.mjs",
+    "test:mutation": "node scripts/run-mutation.mjs",
+    "test:mutation:dry": "node scripts/run-mutation.mjs --dry-run",
+    "test:fault": "node scripts/verify-fault.mjs",
+    "build": "node scripts/astro.mjs build",
+    "build:release": "node scripts/astro.mjs build:release",
+    "preview": "node scripts/astro.mjs preview --host 127.0.0.1",
+    "test:e2e": "playwright test",
+    "test:dom": "node scripts/package-preview.mjs && node --test tests/dom/*.test.mjs"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@stryker-mutator/core": "10.0.0",
+    "@stryker-mutator/tap-runner": "10.0.0",
+    "@types/node": "24.19.1",
+    "astro": "7.3.6",
+    "esbuild": "0.28.2",
+    "eslint": "10.12.0",
+    "eslint-plugin-astro": "3.2.1",
+    "fast-check": "4.10.2",
+    "globals": "17.13.0",
+    "jsdom": "30.1.2",
+    "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.0",
+    "sharp": "0.35.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "yaml": "2.9.1"
+  }
+}

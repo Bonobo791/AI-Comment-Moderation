@@ -1,0 +1,15 @@
+package-lock.json
+README.md
+dist
+node_modules
+.astro
+evidence
+test-results
+playwright-report
+deliverables
+reports
+.stryker-tmp
+deploy/generated
+deploy/*.conf
+Dockerfile
+.dockerignore

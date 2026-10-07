@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": ["src/lib/site-config.mjs", "src/lib/scenario-rules.mjs"],
+  "plugins": ["@stryker-mutator/tap-runner"],
+  "testRunner": "tap",
+  "coverageAnalysis": "perTest",
+  "ignoreStatic": true,
+  "concurrency": 1,
+  "incremental": false,
+  "inPlace": false,
+  "tap": {
+    "testFiles": [
+      "tests/config.test.mjs",
+      "tests/scenarios.test.mjs",
+      "tests/actual-contracts.pbt.test.mjs"
+    ],
+    "nodeArgs": ["--test-reporter=tap", "-r", "{{hookFile}}", "{{testFile}}"],
+    "forceBail": true
+  },
+  "reporters": ["clear-text", "progress", "html", "json"],
+  "htmlReporter": { "fileName": "reports/mutation/index.html" },
+  "jsonReporter": { "fileName": "reports/mutation/mutation.json" },
+  "thresholds": { "high": 80, "low": 60, "break": null },
+  "ignorePatterns": [
+    "dist/**",
+    "node_modules/**",
+    ".astro/**",
+    "evidence/**",
+    "deliverables/**",
+    "reports/**",
+    "test-results/**",
+    "playwright-report/**",
+    "deploy/generated/**"
+  ]
+}

@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found | AI Comment Moderation"
+  description="This page does not exist. Return to the AI comment moderation guide."
+  error
+>
+  <section class="container error-page">
+    <span class="eyebrow">404 / missing page</span>
+    <h1>Page not found</h1>
+    <p>There isn’t a page at this address. The moderation guide lives on one page.</p>
+    <a class="button button-dark" href="/">
+      Return to the guide <span aria-hidden="true">↗</span>
+    </a>
+  </section>
+</BaseLayout>
