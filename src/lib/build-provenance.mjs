@@ -57,6 +57,7 @@ export function verifyBuildMarker(input, expectedCommit) {
     !marker ||
     marker.schemaVersion !== 1 ||
     typeof marker.release !== 'boolean' ||
+    (marker.release && marker.commit === null) ||
     (marker.commit !== null &&
       (typeof marker.commit !== 'string' ||
         marker.commit.length !== 40 ||

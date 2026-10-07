@@ -1,5 +1,17 @@
 # Verification record
 
+## Published review checkpoint (7 October 2026, 00:28 UTC)
+
+[PR #1](https://github.com/Bonobo791/AI-Comment-Moderation/pull/1) points to [fea9000ef6854da1f2ab251e04f2b2c5db571901](https://github.com/Bonobo791/AI-Comment-Moderation/commit/fea9000ef6854da1f2ab251e04f2b2c5db571901), with tested tree 5e049c54336dc40a3cfbbdebab12f54026a8eb4e. Main and the owner's README remain preserved. This source publication changed no deployment or PR readiness setting.
+
+- [PR CI run 37550858187](https://github.com/Bonobo791/AI-Comment-Moderation/actions/runs/37550858187) and push run 37550855370 passed on that exact source head. PR logs confirm 90/90 ordinary tests, 4/4 DOM tests, 10/10 Chromium tests, the digest-pinned Docker build, Nginx syntax, healthy container and served source/artifact-hash HTTP checks
+- Retained desktop/mobile screenshots passed independent static pixel inspection without an obvious visual blocker. The downloaded archive matched GitHub's size and SHA-256. True 200% zoom, screen-reader use and actual hosting remain pending
+- Cubic marked all twelve previously reported issues addressed. Codex completed without new findings. Gitar's repeated punctuation suggestion remains a false positive: the built correction-link paragraph has no space before its period
+- [CodeAnt's completed gate](https://github.com/Bonobo791/AI-Comment-Moderation/pull/1#issuecomment-6026261414) passes antipatterns, secrets, duplicates, SAST, bugs, IAC and dependencies. It still fails on two complex functions. The owner instructed us to skip those two findings; no complexity refactor was made and the gate remains failed
+- [CodeRabbit's marker finding](https://github.com/Bonobo791/AI-Comment-Moderation/pull/1#discussion_r4201713602) is valid: verification accepted release:true with commit:null when no expected SHA was supplied. A local one-condition guard and red/green regression now reject that pair while accepting unidentified previews and identified releases. Fresh local check/lint/format, 91/91 ordinary tests, both deliberate faults, build and 4/4 DOM pass. Preview bytes are unchanged. This correction is awaiting publication and has no new exact-head CI result
+
+The fresh discussion inventory has no other new actionable finding. Earlier records below retain their dated source and environment limits. The failed CodeAnt gate and CodeRabbit changes-requested review remain visible; this checkpoint does not establish merge or public-release readiness.
+
 ## Published preparation baseline (6 October 2026, 23:24 UTC)
 
 Verified through GitHub on 6 October 2026 at 23:24 UTC: [PR #1](https://github.com/Bonobo791/AI-Comment-Moderation/pull/1) is open and ready for review, with source head [702b2908800be6cce2d58a610195b2bfe334e38a](https://github.com/Bonobo791/AI-Comment-Moderation/commit/702b2908800be6cce2d58a610195b2bfe334e38a). This alignment did not change its draft/readiness state. [PR workflow run 37539175975](https://github.com/Bonobo791/AI-Comment-Moderation/actions/runs/37539175975) completed successfully for that source head.

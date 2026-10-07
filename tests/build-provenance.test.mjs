@@ -140,6 +140,13 @@ test('served marker verification rejects stale source identity and corrupted pub
     /build marker/,
   );
 });
+test('served release markers require source identity even without an expected SHA', async () => {
+  const { buildMarker, verifyBuildMarker } = await import('../src/lib/build-provenance.mjs');
+  const preview = buildMarker([['index.html', Buffer.from('hello')]], {});
+  assert.doesNotThrow(() => verifyBuildMarker(preview));
+  assert.throws(() => verifyBuildMarker({ ...preview, release: true }), /build marker/);
+  assert.doesNotThrow(() => verifyBuildMarker({ ...preview, release: true, commit }));
+});
 test('the isolated host smoke checks the served marker rather than relying on health alone', async () => {
   const smoke = await readFile('scripts/smoke-host.mjs', 'utf8');
   assert.match(smoke, /get\('\/build\.json'\)/);
