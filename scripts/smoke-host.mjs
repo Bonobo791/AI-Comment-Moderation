@@ -44,11 +44,27 @@ assert.ok(errorHtml.includes('Page not found'));
 verifyArtifact(marker, '404.html', errorHtml);
 assert.ok(missing.headers.get('content-security-policy'));
 assert.ok(missing.headers.get('x-robots-tag')?.includes('noindex'));
-assert.equal((await get('/404.html')).status, 404);
+assert.equal((await get('/404.html')).status, 200);
+for (const path of ['/index.html', '/404.html']) {
+  const response = await get(path);
+  const content = await response.text();
+  assert.equal(response.status, 200);
+  assert.ok(content.includes('http-equiv="Content-Security-Policy"'), path);
+}
+for (const path of ['/404', '/404/']) {
+  const response = await get(path);
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.ok(response.headers.get('content-security-policy'));
+  assert.ok(response.headers.get('x-robots-tag')?.includes('noindex'));
+}
+assert.ok((await (await get('/404.html')).text()).includes('noindex,follow'));
+assert.equal((await get('/_astro/missing.js')).status, 404);
+assert.equal((await get('/healthz.txt')).status, 404);
+assert.equal((await get('/.env')).status, 404);
 for (const match of html.matchAll(/(?:src|href)="(\/(?:_astro\/|favicon|social)[^"]+)"/g)) {
   const response = await get(match[1]);
   assert.equal(response.status, 200, match[1]);
-  assert.ok(response.headers.get('content-security-policy'));
   verifyArtifact(marker, match[1].slice(1), Buffer.from(await response.arrayBuffer()));
 }
 const scripts = [...html.matchAll(/src="(\/_astro\/[^"]+\.js)"/g)];
@@ -58,5 +74,5 @@ if (scripts.length) {
   assert.ok(asset.headers.get('cache-control')?.includes('immutable'));
 }
 console.log(
-  'Local static-host smoke passed: source/artifact identity, root/assets/health, real 404, CSP/headers and preview indexing',
+  'Local standalone Node smoke passed: source/artifact identity, root/assets/health, real 404, CSP/headers and preview indexing',
 );

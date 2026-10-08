@@ -1,3 +1,24 @@
+# Standalone Astro/Node verification — 8 October 2026
+
+Branch: build/simple-astro-stack, based on current origin/main 16a16c240e02f06478388d1791d5f27635173c51. These observations describe the modified local tree, not a published commit. Preview markers intentionally record commit:null. Reference stack: Site-Bootstrap-ADM 49db7fecae8b8ee6357d44e2fa3a9f14d00c52f8.
+
+- npm ci: clean locked install passed with Node 24.19.0/npm 11.9.0.
+- npm run check, npm run lint, npm run format:check: passed; no Astro diagnostics.
+- npm test: 91/91 passed, including actual fast-check properties.
+- npm run test:fault: both intentional canonical/policy faults detected.
+- npm run build: standalone Node output passed all built-content contracts; public output has 11 files and 132969 bytes.
+- npm run test:dom: 4/4 passed.
+- npm run test:e2e: 10/10 Chromium/axe tests passed, including responsive, keyboard and no-JS flows.
+- npm start and node scripts/smoke-host.mjs on isolated loopback ports: passed root/assets/health/source-marker checks, exact public byte hashes, missing documents/assets/dotfiles, CSP in HTML aliases, /404 and /404/ security/noindex/no-store, and explicit readable noindex /404.html.
+- npm run dev: real root response was 200 with production CSP disabled, preserving Vite inline styling and HMR.
+- Docker: real Node-only multi-stage image built with the optional build_ca secret; nonroot runtime reached healthy and passed the same expanded HTTP smoke. The certificate mount is build-only and not copied into image layers.
+
+The code review found and corrected adapter error/alias header behavior and development CSP interference. Static media/crawler files now use native Node adapter headers with revalidation; root/runtime responses retain HTTP security headers, and static HTML aliases have CSP meta policies. The direct /404.html template is 200/noindex; unknown URLs remain 404. No nginx or TinaCMS is installed. Sessions and application collection remain absent.
+
+Commands ran from /workspace/AI-Comment-Moderation. Docker builds used BUILDX_CONFIG=/workspace/work/buildx and --secret id=build_ca,src=/etc/ssl/certs/ca-certificates.crt for this environment; ordinary hosts need no certificate override. Container check: docker run with loopback 4536:4321, docker inspect health, then node scripts/smoke-host.mjs http://127.0.0.1:4536.
+
+Public Coolify deployment, changing its exposed/routed port to 4321, domain/TLS/DNS and operator release checks remain pending. At the end of local verification, no commit, push, merge or deployment had been performed. The owner subsequently authorized committing and pushing this branch. Earlier results below are historical.
+
 # Verification record
 
 ## Published review checkpoint (7 October 2026, 00:28 UTC)

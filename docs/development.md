@@ -1,3 +1,5 @@
+> Current stack (8 October 2026): standalone Astro/Node on port 4321, with prerendered content in dist/client and runtime /healthz. The nginx references and older results below describe historical verification only. Current commands and hosting contracts are in docs/coolify.md, docs/routes.md and README.md. New verification is recorded in docs/verification.md.
+
 # AICommentModeration.com
 
 A one-page English-language guide to choosing an AI-assisted comment moderation workflow. Built with static Astro HTML and small local interactions. It contains ten fictional scenarios, a workflow chooser, a review checklist, current YouTube native options and a disclosed Moderaty product section.

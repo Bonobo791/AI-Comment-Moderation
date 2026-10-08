@@ -8,7 +8,6 @@ playwright-report/
 test-results/
 evidence/
 deliverables/
-deploy/generated/
 docs/superpowers/
 .superpowers/
 *.zip

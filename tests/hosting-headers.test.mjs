@@ -10,13 +10,13 @@ import { spawnSync } from 'node:child_process';
 test('hosting generation covers a distinct inline script on the real 404 template', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-hosting-fixture-'));
   try {
-    await mkdir(join(dir, 'dist'));
+    await mkdir(join(dir, 'dist/client'), { recursive: true });
     await writeFile(
-      join(dir, 'dist/index.html'),
+      join(dir, 'dist/client/index.html'),
       '<h1>Choose an AI comment moderation workflow</h1><script>root()</script>',
     );
     await writeFile(
-      join(dir, 'dist/404.html'),
+      join(dir, 'dist/client/404.html'),
       '<h1>Page not found</h1><script>errorPage()</script>',
     );
     const run = spawnSync(process.execPath, [resolve('scripts/generate-hosting.mjs')], {
@@ -24,7 +24,7 @@ test('hosting generation covers a distinct inline script on the real 404 templat
       encoding: 'utf8',
     });
     assert.equal(run.status, 0, run.stderr);
-    const headers = await readFile(join(dir, 'deploy/generated/security-headers.conf'), 'utf8');
+    const headers = await readFile(join(dir, 'dist/_headers.json'), 'utf8');
     const expected = createHash('sha256').update('errorPage()').digest('base64');
     assert.ok(
       headers.includes(`'sha256-${expected}'`),
@@ -37,8 +37,8 @@ test('hosting generation covers a distinct inline script on the real 404 templat
 
 test('CSP hashes inline scripts without granting unsafe-inline or third-party access', () => {
   const body = 'document.body.dataset.ready="yes";';
-  const headers = securityHeaders(
-    `<script>${body}</script><script src="/_astro/example.js"></script>`,
+  const headers = JSON.stringify(
+    securityHeaders(`<script>${body}</script><script src="/_astro/example.js"></script>`),
   );
   const expected = createHash('sha256').update(body).digest('base64');
   assert.ok(headers.includes(`'sha256-${expected}'`));
@@ -46,13 +46,15 @@ test('CSP hashes inline scripts without granting unsafe-inline or third-party ac
   assert.ok(headers.includes("frame-ancestors 'none'"));
   assert.ok(headers.includes('X-Content-Type-Options'));
   assert.ok(headers.includes('Referrer-Policy'));
-  assert.ok(headers.includes('always;'));
+  assert.ok(!headers.includes('add_header'));
   assert.ok(!headers.includes('unsafe-inline'));
   assert.ok(!headers.includes('https://'));
 });
 test('external scripts are not mistaken for inline bodies and duplicate bodies share one hash', () => {
-  const headers = securityHeaders(
-    '<script src="/_astro/x.js"></script><script>hello()</script><script>hello()</script>',
+  const headers = JSON.stringify(
+    securityHeaders(
+      '<script src="/_astro/x.js"></script><script>hello()</script><script>hello()</script>',
+    ),
   );
   assert.equal((headers.match(/sha256-/g) ?? []).length, 1);
 });

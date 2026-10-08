@@ -9,13 +9,13 @@ const commit = '702b2908800be6cce2d58a610195b2bfe334e38a';
 async function generated(env, inspect = () => {}) {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-build-marker-'));
   try {
-    await mkdir(join(dir, 'dist/_astro'), { recursive: true });
+    await mkdir(join(dir, 'dist/client/_astro'), { recursive: true });
     await writeFile(
-      join(dir, 'dist/index.html'),
+      join(dir, 'dist/client/index.html'),
       '<h1>Choose an AI comment moderation workflow</h1>',
     );
-    await writeFile(join(dir, 'dist/404.html'), '<h1>Page not found</h1>');
-    await writeFile(join(dir, 'dist/_astro/test.js'), 'hello');
+    await writeFile(join(dir, 'dist/client/404.html'), '<h1>Page not found</h1>');
+    await writeFile(join(dir, 'dist/client/_astro/test.js'), 'hello');
     const run = spawnSync(process.execPath, [resolve('scripts/generate-hosting.mjs')], {
       cwd: dir,
       encoding: 'utf8',
@@ -103,10 +103,10 @@ test('source-marker configuration rejects malformed SHAs and does not mutate sup
 });
 test('Coolify and CI bind marker identity to the checked-out source and retain bounded browser evidence', async () => {
   const docker = await readFile('Dockerfile', 'utf8');
-  const nginx = await readFile('deploy/nginx.conf', 'utf8');
+  const config = await readFile('astro.config.mjs', 'utf8');
   const workflow = await readFile('.github/workflows/checks.yml', 'utf8');
   assert.match(docker, /ARG SITE_COMMIT/);
-  assert.match(nginx, /location = \/build\.json/);
+  assert.match(config, /mode: 'standalone'/);
   assert.match(
     workflow,
     /SITE_COMMIT: \$\{\{ github\.event\.pull_request\.head\.sha \|\| github\.sha \}\}/,

@@ -4,11 +4,11 @@ This project is AICommentModeration.com's static guide. Follow docs/project-spec
 
 ## Scope and branches
 
-Work in the isolated build/template-alignment checkout. Its local baseline is 18e7f47692f3a6d9346610cfb8ae3228ac7d907e; that tree matches published review head 702b2908800be6cce2d58a610195b2bfe334e38a. Preserve unrelated edits and main. Current authorization covers bounded local template adoption and checks. Do not commit, push, merge, deploy, change DNS, create provider accounts or spend without the corresponding approval. Never force-push by default. Earlier review-branch publication approval does not authorize publication of this new alignment.
+For stack simplification, work on build/simple-astro-stack branched from current main. Its local baseline is 18e7f47692f3a6d9346610cfb8ae3228ac7d907e; that tree matches published review head 702b2908800be6cce2d58a610195b2bfe334e38a. Preserve unrelated edits and main. Current authorization covers bounded local template adoption and checks. Do not commit, push, merge, deploy, change DNS, create provider accounts or spend without the corresponding approval. Never force-push by default. Earlier review-branch publication approval does not authorize publication of this new alignment.
 
 ## Before feature work
 
-Use Site-Bootstrap-ADM when available. This is files-only Astro output, served by a prepared Nginx container; it has no request-time application backend. Keep docs/bootstrap.md and docs/bootstrap-tasks.md verified/pending/not-applicable with exact evidence. Each applicable requirement needs its owner, dependencies, files, configuration, working directory, executable commands, positive/negative tests, forbidden effects and done criteria. Keep docs/routes.md and docs/environment.md current.
+Use Site-Bootstrap-ADM when available. Content is prerendered by Astro and served by its standalone Node adapter on port 4321. Runtime routes provide /healthz, /build.json and a 404 fallback. Do not introduce nginx or TinaCMS. Keep docs/bootstrap.md and docs/bootstrap-tasks.md verified/pending/not-applicable with exact evidence. Each applicable requirement needs its owner, dependencies, files, configuration, working directory, executable commands, positive/negative tests, forbidden effects and done criteria. Keep docs/routes.md and docs/environment.md current.
 
 Use Node 24.19.0, npm 11.9.0 and Astro 7.3.6 with the committed npm lockfile. The original guide source remains UNLICENSED. The adopted upstream template/helper portions retain their scoped MIT notice in THIRD_PARTY_NOTICES.md and the exact mapping in docs/template-provenance.md. This is template instantiation in an existing application, with no upstream clone-ancestry claim.
 
@@ -22,7 +22,7 @@ Preserve established test contracts and thresholds. Validate review findings aga
 
 ## Boundaries
 
-Fixtures are fictional. No CMS, server adapter, account, form, tracker, OAuth, model API, external inference, real channel access, database or paid service is selected. Keep source strings rendered as text and editorial destinations allowlisted. Do not copy another project's brands, domains, recipients, identifiers, credentials or private data. Do not claim independent product reviews, guaranteed accuracy or Moderaty support beyond its documented YouTube comment surface.
+Fixtures are fictional. The standalone Node adapter is selected for hosting. No CMS, account, form, tracker, OAuth, model API, external inference, real channel access, database or paid service is selected. Keep source strings rendered as text and editorial destinations allowlisted. Do not copy another project's brands, domains, recipients, identifiers, credentials or private data. Do not claim independent product reviews, guaranteed accuracy or Moderaty support beyond its documented YouTube comment surface.
 
 Default builds are noindex previews. SITE_RELEASE=true prepares an indexable artifact and does not authorize publication. A public commit marker contains only schemaVersion 1, a validated source SHA or null for unidentified preview, the release boolean and relative public output paths with SHA-256 digests; it must not contain account/build-system credentials or repository paths. Analytics stays absent and all routes are ineligible. Adding collection or provider behavior requires its selected contract and authority.
 

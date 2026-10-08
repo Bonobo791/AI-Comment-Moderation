@@ -7,7 +7,6 @@ dist
 !.env.example
 evidence
 deliverables
-deploy/generated
 docs/superpowers
 test-results
 playwright-report

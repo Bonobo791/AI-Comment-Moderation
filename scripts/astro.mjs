@@ -51,6 +51,11 @@ export async function runCommands(steps, env) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
+    try {
+      process.loadEnvFile();
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
     const plan = commandPlan(process.argv[2], process.argv.slice(3));
     process.exitCode = await runCommands(plan.steps, plan.env);
   } catch (error) {

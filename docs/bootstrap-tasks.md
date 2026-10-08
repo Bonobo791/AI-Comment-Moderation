@@ -1,3 +1,21 @@
+# A01 — Simplify hosting to standalone Astro/Node
+
+- Owner: repository implementer; deployment operator owns release checks.
+- State: source/build/browser/standalone HTTP and container checks verified locally.
+- Dependencies: existing prerendered guide, exact Astro 7.3.6 / Node adapter 11.1.6, Node 24.19.0 and npm 11.9.0.
+- Files: package.json/package-lock.json, astro.config.mjs, Dockerfile, src/middleware.ts, src/pages/healthz.ts, src/pages/build.json.ts, src/pages/[...path].ts, scripts/generate-hosting.mjs, output/preview helpers, hosting tests and CI. deploy/nginx.conf is removed.
+- Configuration: build SITE_URL, SITE_RELEASE and optional SITE_COMMIT; runtime HOST=0.0.0.0 and PORT=4321. Sessions are disabled. No CMS or storage.
+- Working directory: repository root (/workspace/AI-Comment-Moderation in this session).
+- Commands: npm ci; npm run check; npm run lint; npm run format:check; npm test; npm run test:fault; npm run build; npm run test:dom; npm run test:e2e; npm start; node scripts/smoke-host.mjs http://127.0.0.1:4535.
+- Positive checks: existing guide/fixtures/assets/canonical policy, health response, build identity and hashed public bytes, runtime errors, browser interactions, nonroot Node container.
+- Negative checks: missing pages/assets and dotfiles return 404, healthz.txt absent, missing release SHA and invalid origins fail, no nginx/TinaCMS/session store/collector, forbidden destinations remain rejected.
+- Forbidden effects: content loss, new tracking/accounts/providers, main changes, deployment or DNS changes.
+- Done criteria: all required source and real runtime checks pass; container and public deployment evidence remain distinct. See docs/verification.md for actual results.
+
+The previous task records below are historical and do not select nginx for this branch.
+
+> Current stack (8 October 2026): standalone Astro/Node on port 4321, with prerendered content in dist/client and runtime /healthz. The nginx references and older results below describe historical verification only. Current commands and hosting contracts are in docs/coolify.md, docs/routes.md and README.md. New verification is recorded in docs/verification.md.
+
 # Bootstrap requirement tasks
 
 These records instantiate the pinned setup-task template for each applicable requirement. Source/blob provenance is in docs/template-provenance.md. Requirement C/S/T/P identifiers belong to the bootstrap; P01-P05 in docs/testing-invariants.md are invariant names and are a separate namespace.
