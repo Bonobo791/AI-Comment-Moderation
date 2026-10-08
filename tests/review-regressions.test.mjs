@@ -53,14 +53,17 @@ function guide(examples) {
 async function checkOutput(html, release = false) {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-output-review-'));
   try {
-    await mkdir(join(dir, 'dist'));
-    await writeFile(join(dir, 'dist/index.html'), html);
-    await writeFile(join(dir, 'dist/404.html'), 'Page not found noindex,follow');
+    await mkdir(join(dir, 'dist/client'), { recursive: true });
+    await writeFile(join(dir, 'dist/client/index.html'), html);
+    await writeFile(join(dir, 'dist/client/404.html'), 'Page not found noindex,follow');
     await writeFile(
-      join(dir, 'dist/robots.txt'),
+      join(dir, 'dist/client/robots.txt'),
       `${release ? 'Allow' : 'Disallow'}: /\nSitemap: https://aicommentmoderation.com/sitemap.xml`,
     );
-    await writeFile(join(dir, 'dist/sitemap.xml'), '<loc>https://aicommentmoderation.com/</loc>');
+    await writeFile(
+      join(dir, 'dist/client/sitemap.xml'),
+      '<loc>https://aicommentmoderation.com/</loc>',
+    );
     return spawnSync(process.execPath, [resolve('scripts/check-output.mjs')], {
       cwd: dir,
       encoding: 'utf8',

@@ -1,12 +1,14 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { resolve } from 'node:path';
-let html = await readFile('dist/index.html', 'utf8');
+let html = await readFile('dist/client/index.html', 'utf8');
+// Packaging changes inline script/style bytes, so remove the server artifact policy.
+html = html.replace(/<meta http-equiv="Content-Security-Policy"[^>]*>/g, '');
 const robotsMeta = /(<meta name="robots" content=")[^"]+("[^>]*>)/;
 if (!robotsMeta.test(html)) throw new Error('Cannot package a preview without robots metadata');
 html = html.replace(robotsMeta, '$1noindex,follow$2');
 for (const match of [...html.matchAll(/<link rel="stylesheet" href="(\/_astro\/[^"]+)"[^>]*>/g)]) {
-  const stylesheetPath = `dist${match[1]}`;
+  const stylesheetPath = `dist/client${match[1]}`;
   const stylesheet = await readFile(stylesheetPath, 'utf8');
   html = html.replace(match[0], `<style>${stylesheet}</style>`);
 }
@@ -14,7 +16,7 @@ for (const match of [
   ...html.matchAll(/<script type="module" src="(\/_astro\/[^"]+)"><\/script>/g),
 ]) {
   const result = await build({
-    entryPoints: [resolve(`dist${match[1]}`)],
+    entryPoints: [resolve(`dist/client${match[1]}`)],
     bundle: true,
     write: false,
     minify: true,

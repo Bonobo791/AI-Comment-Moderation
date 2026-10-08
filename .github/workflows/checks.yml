@@ -57,18 +57,16 @@ jobs:
           node-version-file: .node-version
       - name: Build isolated preview image
         run: docker build --build-arg SITE_URL=https://aicommentmoderation.com --build-arg SITE_RELEASE=false --build-arg SITE_COMMIT="$SITE_COMMIT" -t aicommentmoderation:ci .
-      - name: Verify Nginx syntax
-        run: docker run --rm --entrypoint nginx aicommentmoderation:ci -t
-      - name: Verify container health and static HTTP contracts
+      - name: Verify container health and Node HTTP contracts
         run: |
-          docker run -d --name aicm-smoke --health-interval=2s --health-start-period=1s -p 127.0.0.1:8080:8080 aicommentmoderation:ci
-          for attempt in $(seq 1 30); do
+          docker run -d --name aicm-smoke --health-interval=2s --health-start-period=1s -p 127.0.0.1:4321:4321 aicommentmoderation:ci
+          for _ in $(seq 1 30); do
             status=$(docker inspect --format '{{.State.Health.Status}}' aicm-smoke)
             if [ "$status" = healthy ]; then break; fi
             sleep 2
           done
           test "$(docker inspect --format '{{.State.Health.Status}}' aicm-smoke)" = healthy
-          node scripts/smoke-host.mjs http://127.0.0.1:8080 "$SITE_COMMIT"
+          node scripts/smoke-host.mjs http://127.0.0.1:4321 "$SITE_COMMIT"
       - name: Preserve container diagnostics
         if: failure()
         run: docker logs aicm-smoke || true

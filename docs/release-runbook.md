@@ -1,3 +1,5 @@
+> Current stack (8 October 2026): standalone Astro/Node on port 4321, with prerendered content in dist/client and runtime /healthz. The nginx references and older results below describe historical verification only. Current commands and hosting contracts are in docs/coolify.md, docs/routes.md and README.md. New verification is recorded in docs/verification.md.
+
 # Release and recovery record
 
 Preparation record dated 6 October 2026: final local source checks passed at 23:17-23:18 UTC and focused properties at 23:26 UTC; publication state refers to the verified 23:24 UTC checkpoint. Later approved publication/CI must add exact-head evidence. Production/manual gates below remain open.

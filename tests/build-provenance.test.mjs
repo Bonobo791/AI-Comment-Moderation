@@ -6,16 +6,23 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 const commit = '702b2908800be6cce2d58a610195b2bfe334e38a';
-async function generated(env, inspect = () => {}) {
+async function generated(env, inspect = () => {}, prepare = async () => {}) {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-build-marker-'));
   try {
-    await mkdir(join(dir, 'dist/_astro'), { recursive: true });
+    await mkdir(join(dir, 'dist/client/_astro'), { recursive: true });
     await writeFile(
-      join(dir, 'dist/index.html'),
-      '<h1>Choose an AI comment moderation workflow</h1>',
+      join(dir, 'dist/client/index.html'),
+      '<html><head></head><body><h1>Choose an AI comment moderation workflow</h1></body></html>',
     );
-    await writeFile(join(dir, 'dist/404.html'), '<h1>Page not found</h1>');
-    await writeFile(join(dir, 'dist/_astro/test.js'), 'hello');
+    await writeFile(
+      join(dir, 'dist/client/404.html'),
+      '<html><head></head><body><h1>Page not found</h1></body></html>',
+    );
+    await writeFile(join(dir, 'dist/client/_astro/test.js'), 'hello');
+    await mkdir(join(dir, 'dist/client/nested'));
+    await writeFile(join(dir, 'dist/client/nested/build.json'), 'hello');
+    await writeFile(join(dir, 'dist/client/nested/healthz.txt'), 'hello');
+    await prepare(dir);
     const run = spawnSync(process.execPath, [resolve('scripts/generate-hosting.mjs')], {
       cwd: dir,
       encoding: 'utf8',
@@ -49,6 +56,9 @@ test('hosting generates a safe source marker and actual public artifact hashes',
         marker.files['_astro/test.js'],
         '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824',
       );
+      for (const path of ['nested/build.json', 'nested/healthz.txt']) {
+        assert.equal(marker.files[path], marker.files['_astro/test.js'], path);
+      }
       assert.match(marker.files['index.html'], /^[a-f0-9]{64}$/);
       assert.equal('build.json' in marker.files, false);
       assert.equal('healthz.txt' in marker.files, false);
@@ -103,10 +113,10 @@ test('source-marker configuration rejects malformed SHAs and does not mutate sup
 });
 test('Coolify and CI bind marker identity to the checked-out source and retain bounded browser evidence', async () => {
   const docker = await readFile('Dockerfile', 'utf8');
-  const nginx = await readFile('deploy/nginx.conf', 'utf8');
+  const config = await readFile('astro.config.mjs', 'utf8');
   const workflow = await readFile('.github/workflows/checks.yml', 'utf8');
   assert.match(docker, /ARG SITE_COMMIT/);
-  assert.match(nginx, /location = \/build\.json/);
+  assert.match(config, /mode: 'standalone'/);
   assert.match(
     workflow,
     /SITE_COMMIT: \$\{\{ github\.event\.pull_request\.head\.sha \|\| github\.sha \}\}/,
@@ -153,4 +163,21 @@ test('the isolated host smoke checks the served marker rather than relying on he
   assert.match(smoke, /process\.argv\[3\]/);
   assert.match(smoke, /verifyBuildMarker\(/);
   assert.match(smoke, /verifyArtifact\(/);
+});
+
+test('hosting rejects a missing head before writing CSP metadata or the marker', async () => {
+  for (const page of ['index.html', '404.html']) {
+    await generated(
+      {},
+      async (dir, run) => {
+        assert.notEqual(run.status, 0);
+        assert.match(run.stderr, /head element/);
+        assert.equal(existsSync(join(dir, 'dist/build.json')), false);
+      },
+      async (dir) => {
+        const path = join(dir, 'dist/client', page);
+        await writeFile(path, (await readFile(path, 'utf8')).replace('</head>', ''));
+      },
+    );
+  }
 });

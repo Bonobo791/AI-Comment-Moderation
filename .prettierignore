@@ -8,7 +8,5 @@ playwright-report
 deliverables
 reports
 .stryker-tmp
-deploy/generated
-deploy/*.conf
 Dockerfile
 .dockerignore

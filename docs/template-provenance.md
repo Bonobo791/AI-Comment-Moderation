@@ -47,3 +47,7 @@ The actual lippincott-example.md maps inspected application patterns into a neut
 - Original guide/application/source/assets and target-authored additions: existing owner-controlled UNLICENSED status remains. No repository-wide MIT license was added and no owner public-license decision is implied
 - Dependency licenses: remain with installed packages; this notice is not a complete dependency license audit or a production license clearance
 - Publication preparation checkpoint, 6 October 2026 at 23:24 UTC: this alignment was local/uncommitted. Final local checks are recorded in docs/verification.md. New source publication requires the corresponding approval and a dated exact-head CI record; no merge or deployment follows from template adoption
+
+## Standalone stack alignment, 8 October 2026
+
+Reference: Site-Bootstrap-ADM commit 49db7fecae8b8ee6357d44e2fa3a9f14d00c52f8, skills/site-bootstrap-adm/assets/site. Adopted the Astro 7.3.6 / Node adapter 11.1.6 dependencies, standalone production command, prerendered output, Node-only multistage Docker runtime and runtime health endpoint. Existing site identity, licensing, content, URLs, preview indexing, artifact hashes and tests remain project-specific. nginx is removed; TinaCMS was never installed. Session storage is explicitly disabled. The earlier document/helper attribution above remains applicable.

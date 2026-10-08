@@ -5,7 +5,7 @@ import { allowedExternalUrl, siteConfig } from '../src/lib/site-config.mjs';
 import { scenarios } from '../src/data/scenarios.mjs';
 import { JSDOM } from 'jsdom';
 const config = siteConfig(process.env);
-const html = await readFile('dist/index.html', 'utf8');
+const html = await readFile('dist/client/index.html', 'utf8');
 const dom = new JSDOM(html);
 const document = dom.window.document;
 assert.match(
@@ -82,7 +82,7 @@ async function checkDestinations(document, label) {
         attribute === 'src' ||
         (element.tagName === 'LINK' &&
           ['stylesheet', 'icon'].includes(element.getAttribute('rel')));
-      if (local && resource) await readFile(join('dist', url.pathname));
+      if (local && resource) await readFile(join('dist/client', url.pathname));
     }
   }
 }
@@ -125,17 +125,17 @@ for (const scenario of scenarios) {
 }
 assert.equal(examples.length, scenarios.length, 'Unexpected pre-rendered fictional fixture count');
 dom.window.close();
-const error = await readFile('dist/404.html', 'utf8');
+const error = await readFile('dist/client/404.html', 'utf8');
 assert.ok(error.includes('Page not found'));
 assert.ok(!error.includes('rel="canonical"'));
 assert.ok(error.includes('noindex,follow'));
 const errorDOM = new JSDOM(error);
 await checkDestinations(errorDOM.window.document, '404.html');
 errorDOM.window.close();
-const robots = await readFile('dist/robots.txt', 'utf8');
+const robots = await readFile('dist/client/robots.txt', 'utf8');
 assert.ok(robots.includes('Sitemap: https://aicommentmoderation.com/sitemap.xml'));
 assert.ok(robots.includes(config.release ? 'Allow: /' : 'Disallow: /'));
-const sitemap = await readFile('dist/sitemap.xml', 'utf8');
+const sitemap = await readFile('dist/client/sitemap.xml', 'utf8');
 assert.equal((sitemap.match(/<loc>/g) ?? []).length, 1);
 assert.ok(sitemap.includes('<loc>https://aicommentmoderation.com/</loc>'));
 const files = [];
@@ -146,7 +146,7 @@ async function walk(dir) {
     else files.push(path);
   }
 }
-await walk('dist');
+await walk('dist/client');
 for (const path of files.filter((p) => /\.(?:html|js|txt|xml|json)$/.test(p))) {
   const body = await readFile(path, 'utf8');
   for (const forbidden of [
@@ -167,7 +167,7 @@ for (const path of files.filter((p) => /\.(?:html|js|txt|xml|json)$/.test(p))) {
     );
 }
 for (const match of html.matchAll(/(?:src|href)="(\/(?:_astro\/|favicon|social)[^"]+)"/g))
-  await readFile(join('dist', match[1]));
+  await readFile(join('dist/client', match[1]));
 const size = files.reduce(
   async (promise, path) => (await promise) + (await readFile(path)).byteLength,
   Promise.resolve(0),

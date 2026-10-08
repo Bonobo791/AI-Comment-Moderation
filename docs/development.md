@@ -1,3 +1,5 @@
+> Current stack (8 October 2026): standalone Astro/Node on port 4321, with prerendered content in dist/client and runtime /healthz. The nginx references and older results below describe historical verification only. Current commands and hosting contracts are in docs/coolify.md, docs/routes.md and README.md. New verification is recorded in docs/verification.md.
+
 # AICommentModeration.com
 
 A one-page English-language guide to choosing an AI-assisted comment moderation workflow. Built with static Astro HTML and small local interactions. It contains ten fictional scenarios, a workflow chooser, a review checklist, current YouTube native options and a disclosed Moderaty product section.
@@ -41,13 +43,13 @@ The Playwright suite targets the built preview at port 4531. It covers interacti
 
 ## Coolify
 
-The repository includes a multi-stage Dockerfile and nonroot Nginx configuration for Coolify's Dockerfile build pack, internal port 8080, real 404, artifact-specific CSP hashes and an image health check. GitHub CI verified the isolated container at the published head. See `docs/coolify.md` for image resolutions, exact settings and smoke commands. Docker/Podman/nginx are unavailable here. No Coolify resource or deployment was created.
+The repository includes a multi-stage Dockerfile for Coolify's Dockerfile build pack. The standalone Astro Node adapter runs as a nonroot user on internal port 4321. CI checks container health, source/artifact identity, genuine 404 responses and security headers. See `docs/coolify.md` for settings and smoke commands. No Coolify resource or deployment was created.
 
 ## Build behavior
 
 `npm run build` creates a noindex preview in `dist/`. `SITE_URL` defaults to the intended apex only for preview. For a separately authorized release artifact, `SITE_URL=https://aicommentmoderation.com SITE_COMMIT=$(git rev-parse HEAD) npm run build:release` in a POSIX shell requires explicit exact-host and full source-SHA configuration and emits indexable HTML. Use a reviewed clean source commit for an approved release; a marker supplied from HEAD does not prove an uncommitted tree equals that commit. In Windows PowerShell, set `$env:SITE_URL = 'https://aicommentmoderation.com'` and `$env:SITE_COMMIT = (git rev-parse HEAD)`, then run `npm run build:release`. That command does not authorize deployment; see `docs/release-runbook.md`.
 
-No CMS generation, database, server adapter, account, form, analytics, cookies, OAuth or model API is selected. The explorer computes fixed fictional decisions locally. All ten cases and both mode explanations are in HTML. Checklist state lasts only in the tab. The guide sends no runtime third-party requests.
+The standalone Node server adapter is selected. No CMS generation, database, account, form, analytics, cookies, OAuth or model API is selected. The explorer computes fixed fictional decisions locally. All ten cases and both mode explanations are in HTML. Checklist state lasts only in the tab. The guide sends no runtime third-party requests.
 
 ## Project files
 

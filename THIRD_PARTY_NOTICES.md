@@ -2,7 +2,7 @@
 
 ## Site-Bootstrap-ADM adopted portions
 
-Source: Bonobo791/Site-Bootstrap-ADM, commit 916df29d7410b4a9a5048ed69819b5da448a2ecf. Exact upstream file/blob and target mappings are in docs/template-provenance.md.
+Source: Bonobo791/Site-Bootstrap-ADM, commit 916df29d7410b4a9a5048ed69819b5da448a2ecf. The standalone Astro/Node configuration, Docker runtime pattern and health endpoint are also adapted from skills/site-bootstrap-adm/assets/site at commit 49db7fecae8b8ee6357d44e2fa3a9f14d00c52f8, under the same MIT license. Exact upstream file/blob and target mappings are in docs/template-provenance.md.
 
 The license below applies to the adopted upstream template structures/wording in AGENTS.md, docs/bootstrap.md, docs/bootstrap-tasks.md, docs/routes.md, docs/environment.md, docs/release-runbook.md, selected .env.example/.gitignore portions and the copied tests/helpers/property-options.mjs helper. Target-specific additions remain subject to their existing owner rights. This scoped notice does not relicense the original guide/application/assets or the repository as a whole; package.json remains UNLICENSED pending the owner's public-license choice.
 

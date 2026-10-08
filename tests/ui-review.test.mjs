@@ -31,10 +31,10 @@ test('Playwright uses its installed Chromium unless an explicit executable overr
 test('offline preview stays noindex even when packaged from a release artifact', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-preview-indexing-'));
   try {
-    await mkdir(join(dir, 'dist'));
+    await mkdir(join(dir, 'dist/client'), { recursive: true });
     await mkdir(join(dir, 'public'));
     await writeFile(
-      join(dir, 'dist/index.html'),
+      join(dir, 'dist/client/index.html'),
       '<html><head><meta name="robots" content="index,follow"><link rel="icon" href="/favicon.svg"></head><body>Guide</body></html>',
     );
     await writeFile(

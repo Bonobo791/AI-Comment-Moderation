@@ -51,7 +51,7 @@ External links are informational exits, not tested endorsements. Do not copy acc
 
 ## Technical contract
 
-Static Astro output; no server adapter, CMS, account, form, tracker, API key or external inference. Default builds are noindex previews. Explicit release configuration requires the exact HTTPS apex and rejects old/corrected-away, localhost, preview and lookalike hosts. Canonicals omit queries/fragments. Sitemap contains the root only; 404 has no homepage canonical.
+Astro prerenders content and uses @astrojs/node in standalone mode for delivery, matching the current Site-Bootstrap-ADM template. Runtime /healthz checks Node availability. No nginx, TinaCMS, account, form, tracker, API key or external inference. Default builds are noindex previews. Explicit release configuration requires the exact HTTPS apex and rejects old/corrected-away, localhost, preview and lookalike hosts. Canonicals omit queries/fragments. Sitemap contains the root only; 404 has no homepage canonical.
 
 Use original CSS/SVG assets and system fonts. External destinations must use HTTPS and exact approved hosts. Render fixture strings as text. No browser storage, tracking cookies or runtime third-party requests. Hosting logs, retention, legal operator, contact details, training preferences and security/header delivery need actual release decisions.
 
