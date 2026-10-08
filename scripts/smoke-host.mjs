@@ -50,6 +50,11 @@ for (const path of ['/index.html', '/404.html']) {
   const content = await response.text();
   assert.equal(response.status, 200);
   assert.ok(content.includes('http-equiv="Content-Security-Policy"'), path);
+  assert.equal(response.headers.get('x-frame-options'), 'DENY', path);
+  assert.ok(
+    response.headers.get('content-security-policy')?.includes("frame-ancestors 'none'"),
+    path,
+  );
 }
 for (const path of ['/404', '/404/']) {
   const response = await get(path);

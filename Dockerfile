@@ -11,7 +11,7 @@ RUN --mount=type=secret,id=build_ca \
     if [ -f /run/secrets/build_ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/build_ca; fi; \
     npm install -g npm@11.9.0 --ignore-scripts && npm ci --ignore-scripts
 COPY . .
-RUN npm run check && npm run lint && npm run format:check && npm test && npm run test:fault && npm run build && npm prune --omit=dev --ignore-scripts
+RUN npm run build && npm prune --omit=dev --ignore-scripts
 
 FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS runtime
 WORKDIR /app

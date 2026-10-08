@@ -1,3 +1,17 @@
+# PR #3 review triage — 8 October 2026
+
+These checks cover the corrections on build/simple-astro-stack after published parent 302c2c270551d7e20eca7593dda5d6b1e1a64893. Commands ran in /workspace/AI-Comment-Moderation with Node 24.19.0/npm 11.9.0. The preview artifact intentionally has commit:null because the tested tree included uncommitted corrections.
+
+- Fixed all four CodeAnt findings: matching foreground-server/smoke ports, preserved shell failure status, complete hashes for nested public files and HTTP frame protection for /index.html and /404.html. The pinned adapter's manifest route patterns now include the two aliases, allowing its native static header registry to apply; prerender paths stay unchanged.
+- Fixed CodeRabbit's unused CI loop variable, dirty-tree source marker instructions, preview access boundary and stale adapter description. CSP generation now rejects either missing head element before writing files. Its regression failed before the guard and passes afterward. The nested-file regression likewise failed before the hash fix.
+- Simplified Docker builds to the build/prune steps; required source checks remain in CI. The local runbook waits for health, retains failures and cleans up only the container it created.
+- Kept output:static with the standalone adapter. Amazon Q's incompatibility finding is a false positive for Astro 7.3.6/@astrojs/node 11.1.6: this adapter supports static output with runtime routes, demonstrated by successful builds and real HTTP checks. Optional response buffering/caching and blanket docstring suggestions do not identify a functional defect and were not adopted.
+- npm ci, npm run check, npm run lint and npm run format:check passed. Astro reported no diagnostics. npm test passed 92/92 including actual properties; npm run test:fault detected both deliberate faults. npm run build passed; npm run test:dom passed 4/4 and npm run test:e2e passed 10/10.
+- The final Docker image built with the environment's build-only CA secret. Its node user reached healthy and node scripts/smoke-host.mjs http://127.0.0.1:4545 passed source/artifact identity, root/assets/health, genuine 404, HTML alias CSP/frame headers and preview indexing.
+- Independent source review found no introduced runtime defect; its cleanup-name collision finding was corrected by capturing the newly created container ID.
+
+No merge, Coolify deployment or public release occurred. Earlier records below retain their original tested source and limits.
+
 # Standalone Astro/Node verification — 8 October 2026
 
 Branch: build/simple-astro-stack, based on current origin/main 16a16c240e02f06478388d1791d5f27635173c51. These observations describe the modified local tree, not a published commit. Preview markers intentionally record commit:null. Reference stack: Site-Bootstrap-ADM 49db7fecae8b8ee6357d44e2fa3a9f14d00c52f8.

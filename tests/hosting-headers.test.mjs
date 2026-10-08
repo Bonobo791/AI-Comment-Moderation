@@ -13,11 +13,11 @@ test('hosting generation covers a distinct inline script on the real 404 templat
     await mkdir(join(dir, 'dist/client'), { recursive: true });
     await writeFile(
       join(dir, 'dist/client/index.html'),
-      '<h1>Choose an AI comment moderation workflow</h1><script>root()</script>',
+      '<head></head><h1>Choose an AI comment moderation workflow</h1><script>root()</script>',
     );
     await writeFile(
       join(dir, 'dist/client/404.html'),
-      '<h1>Page not found</h1><script>errorPage()</script>',
+      '<head></head><h1>Page not found</h1><script>errorPage()</script>',
     );
     const run = spawnSync(process.execPath, [resolve('scripts/generate-hosting.mjs')], {
       cwd: dir,

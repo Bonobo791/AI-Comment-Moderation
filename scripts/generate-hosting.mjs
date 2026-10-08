@@ -7,10 +7,12 @@ let errorHtml = await readFile('dist/client/404.html', 'utf8');
 if (!html.includes('Choose an AI comment moderation workflow'))
   throw new Error('Cannot prepare hosting without the expected built guide');
 const headers = securityHeaders(html + '\n' + errorHtml);
-// Static HTML aliases bypass the adapter's header registry. Keep the script policy
-// in the HTML too; frame-ancestors requires an HTTP header and is omitted here.
+// Keep the script policy in the HTML as well as the native header registry;
+// frame-ancestors requires an HTTP header and is omitted from the meta policy.
 const policy = headers['Content-Security-Policy'].replace("; frame-ancestors 'none'", '');
 const meta = `<meta http-equiv="Content-Security-Policy" content="${policy}">`;
+if (!html.includes('</head>') || !errorHtml.includes('</head>'))
+  throw new Error('Cannot add CSP metadata without a head element');
 html = html.replace('</head>', `${meta}</head>`);
 errorHtml = errorHtml.replace('</head>', `${meta}</head>`);
 await writeFile('dist/client/index.html', html);
@@ -20,13 +22,17 @@ async function collect(dir) {
   for (const item of await readdir(dir, { withFileTypes: true })) {
     const path = join(dir, item.name);
     if (item.isDirectory()) await collect(path);
-    else if (!['build.json', 'healthz.txt'].includes(item.name))
-      publicFiles.push([relative('dist/client', path).replaceAll('\\', '/'), await readFile(path)]);
+    else {
+      const publicPath = relative('dist/client', path).replaceAll('\\', '/');
+      if (['build.json', 'healthz.txt'].includes(publicPath))
+        throw new Error(`Reserved public artifact path: ${publicPath}`);
+      publicFiles.push([publicPath, await readFile(path)]);
+    }
   }
 }
 await collect('dist/client');
 const marker = buildMarker(publicFiles, process.env);
-const routes = ['/', '/404', '/404/'];
+const routes = ['/', '/index.html', '/404', '/404/', '/404.html'];
 await writeFile(
   'dist/_headers.json',
   JSON.stringify(
@@ -34,8 +40,8 @@ await writeFile(
       pathname,
       headers: Object.entries({
         ...headers,
-        'Cache-Control': pathname === '/' ? 'no-cache' : 'no-store',
-        ...(pathname !== '/' ? { 'X-Robots-Tag': 'noindex, follow' } : {}),
+        'Cache-Control': ['/', '/index.html'].includes(pathname) ? 'no-cache' : 'no-store',
+        ...(!['/', '/index.html'].includes(pathname) ? { 'X-Robots-Tag': 'noindex, follow' } : {}),
       }).map(([key, value]) => ({ key, value })),
     })),
     null,
