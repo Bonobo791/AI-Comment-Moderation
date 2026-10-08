@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 const commit = '702b2908800be6cce2d58a610195b2bfe334e38a';
-async function generated(env, inspect = () => {}, prepare = () => {}) {
+async function generated(env, inspect = () => {}, prepare = async () => {}) {
   const dir = await mkdtemp(join(tmpdir(), 'aicm-build-marker-'));
   try {
     await mkdir(join(dir, 'dist/client/_astro'), { recursive: true });

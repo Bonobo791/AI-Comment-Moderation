@@ -21,6 +21,7 @@ The image starts with `node ./dist/server/entry.mjs`. Its health check uses Node
 For a local preview container:
 
 ```sh
+(
 set -eu
 test -z "$(git status --porcelain)" || { echo 'Commit or discard local changes before identifying this preview as HEAD.' >&2; exit 1; }
 docker build --build-arg SITE_URL=https://aicommentmoderation.com --build-arg SITE_RELEASE=false --build-arg SITE_COMMIT="$(git rev-parse HEAD)" -t aicommentmoderation:preview .
@@ -33,6 +34,7 @@ until [ "$(docker inspect --format '{{.State.Health.Status}}' "$preview_containe
   sleep 1
 done
 node scripts/smoke-host.mjs http://127.0.0.1:4321 "$(git rev-parse HEAD)"
+)
 ```
 
 The root page uses artifact-specific CSP hashes and security headers through the adapter's static header registry. The /index.html and /404.html aliases receive the same HTTP frame protection and also carry CSP meta policies; crawler and media files use native adapter headers. Runtime errors, health and the build marker use Astro routes and middleware. Fingerprinted assets use immutable caching; public media uses adapter defaults. /404.html is a readable noindex error template (200); unknown URLs return a genuine 404. /healthz.txt no longer exists. Headers are stored outside the public client directory.
